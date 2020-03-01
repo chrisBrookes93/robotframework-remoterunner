@@ -5,17 +5,7 @@ README
 unit tests
 Python3 support - tox
 Turn into a package
-GitLab pipeline
 publish to PyPi
-
-Feature List:
-logging
-
-
-
-Known issues:
-Input args doesn't currently support multiple
-Resources, Variable and Library files that a suite needs aren't currently shipped
 """
 import sys
 import os
