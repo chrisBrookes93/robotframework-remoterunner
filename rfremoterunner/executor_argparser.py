@@ -4,7 +4,7 @@ import os
 ROBOT_RUN_ARGS = ['loglevel', 'include', 'test', 'exclude', 'suite']
 
 
-class ExecutorArgumentParser(dict):
+class ExecutorArgumentParser:
 
     def __init__(self, args):
         """
@@ -36,8 +36,8 @@ class ExecutorArgumentParser(dict):
         parser = argparse.ArgumentParser()
         parser.add_argument('host',
                             help='IP or Hostname of the server to execute the robot run on. You can optionally specify '
-                                 'the port the server is listening on by adding ":<port>". If not specified the port will '
-                                 'be defaulted to 1471')
+                                 'the port the server is listening on by adding ":<port>". If not specified the port '
+                                 'will be defaulted to 1471')
         parser.add_argument('suites', nargs='+',
                             help='One or more paths to test suites or directories containing test suites')
         parser.add_argument('-d', '--outputdir',
@@ -57,26 +57,27 @@ class ExecutorArgumentParser(dict):
 
         # Arguments passed into the robot run on the remote host:
         parser.add_argument('-i', '--include',
-                            help='Select test cases to run by tag. Similarly as name  with --test, tag is case and space '
-                                 'insensitive and it is possible to use patterns with `*` and `?` as wildcards. Tags and '
-                                 'patterns can also be combined together with `AND`, `OR`, and `NOT` operators. Examples: '
-                                 '--include foo --include bar* --include fooANDbar*')
+                            help='Select test cases to run by tag. Similarly as name  with --test, tag is case and '
+                                 'space insensitive and it is possible to use patterns with `*` and `?` as wildcards. '
+                                 'Tags and patterns can also be combined together with `AND`, `OR`, and `NOT` '
+                                 'operators. Examples: --include foo --include bar* --include fooANDbar*')
         parser.add_argument('-e', '--exclude',
                             help='Select test cases not to run by tag. These tests are not run even if included with '
                                  '--include. Tags are matched using the rules explained with --include.')
         parser.add_argument('-t', '--test',
-                            help='Select test cases to run by name or long name. Name is case and space insensitive and it '
-                                 'can also be a simple pattern where `*` matches anything and `?` matches any char.')
+                            help='Select test cases to run by name or long name. Name is case and space insensitive and'
+                                 ' it can also be a simple pattern where `*` matches anything and `?` matches any '
+                                 'char.')
         parser.add_argument('-s', '--suite',
-                            help='Select test suites to run by name. When this option is used with --test, --include or '
-                                 '--exclude, only test cases in matching suites and also matching other filtering criteria '
-                                 'are selected. Name can be a simple pattern similarly as with --test and it can contain '
-                                 'parent name separated with a dot. For example `-s X.Y` selects suite `Y` only if its '
-                                 'parent is `X`.')
+                            help='Select test suites to run by name. When this option is used with --test, --include or'
+                                 ' --exclude, only test cases in matching suites and also matching other filtering '
+                                 'criteria are selected. Name can be a simple pattern similarly as with --test and it '
+                                 'can contain parent name separated with a dot. For example `-s X.Y` selects suite `Y` '
+                                 'only if its parent is `X`.')
         parser.add_argument('-L', '--loglevel',
-                            help=' Threshold level for logging. Available levels: TRACE, DEBUG, INFO (default), WARN, NONE '
-                                 '(no logging). Use syntax `LOGLEVEL:DEFAULT` to define the default visible log level in '
-                                 'log files. Examples: --loglevel DEBUG --loglevel DEBUG:INFO')
+                            help=' Threshold level for logging. Available levels: TRACE, DEBUG, INFO (default), WARN, '
+                                 'NONE (no logging). Use syntax `LOGLEVEL:DEFAULT` to define the default visible log '
+                                 'level in log files. Examples: --loglevel DEBUG --loglevel DEBUG:INFO')
         return parser
 
     def get_log_file_output_location(self):
@@ -118,7 +119,6 @@ class ExecutorArgumentParser(dict):
         :return: Absolute path of where to save the test artifact
         :rtype: str
         """
-        output_path = None
         parent_dir = self.outputdir or '.'
 
         if argument_val:

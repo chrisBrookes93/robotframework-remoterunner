@@ -6,7 +6,7 @@ from robot.run import run
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from StringIO import StringIO
 
-from rfslave.utils import generate_temporary_directory_name, write_file_to_disk, read_file_from_disk
+from rfremoterunner.utils import generate_temporary_directory_name, write_file_to_disk, read_file_from_disk
 
 
 DEFAULT_PORT = 1471

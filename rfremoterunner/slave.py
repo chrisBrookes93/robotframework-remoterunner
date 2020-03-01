@@ -1,6 +1,6 @@
 import argparse
 
-from rfslave.rf_server import RobotFrameworkServer
+from rfremoterunner.rf_server import RobotFrameworkServer
 
 
 def run_slave():

@@ -2,7 +2,7 @@ import io
 import uuid
 import re
 
-PORT_INC_REGEX = ':[0-9]{1-5}'
+PORT_INC_REGEX = '.*:[0-9]{1,5}$'
 
 
 def read_file_from_disk(path):
@@ -54,7 +54,7 @@ def normalize_xmlrpc_address(address, default_port):
     :return: Normalised address
     :rtype: str
     """
-    if not re.search(PORT_INC_REGEX, address):
+    if not re.match(re.compile(PORT_INC_REGEX), address):
         address = '{}:{}'.format(address, default_port)
     if not address.startswith(('http', 'https')):
         address = 'http://{}'.format(address)

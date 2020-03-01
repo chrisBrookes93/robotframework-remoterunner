@@ -2,7 +2,7 @@ import os
 import xmlrpclib
 import base64
 
-from rfslave.utils import read_file_from_disk, normalize_xmlrpc_address
+from rfremoterunner.utils import read_file_from_disk, normalize_xmlrpc_address
 
 DEFAULT_PORT = 1471
 ROBOT_FILE_EXT = ('robot', 'txt', 'html')
