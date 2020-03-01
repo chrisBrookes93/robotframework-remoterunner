@@ -2,12 +2,20 @@ import tempfile
 import os
 import base64
 import shutil
+import six
 from robot.run import run
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-from StringIO import StringIO
-
 from rfremoterunner.utils import generate_temporary_directory_name, write_file_to_disk, read_file_from_disk
+try:
+    # Python 2
+    from StringIO import StringIO
+    from SimpleXMLRPCServer import SimpleXMLRPCServer
+except:
+    # Python3
+    from xmlrpc.server import SimpleXMLRPCServer
+    from io import StringIO
 
+if six.PY3:
+    unicode = str
 
 DEFAULT_PORT = 1471
 
@@ -38,7 +46,7 @@ class RobotFrameworkServer:
         """
         Blocking call to wait for XML-RPC connections
         """
-        print 'Listening on {}:{}'.format(self._address, self._port)
+        print('Listening on {}:{}'.format(self._address, self._port))
         self._server.serve_forever()
 
     @staticmethod
@@ -54,6 +62,7 @@ class RobotFrameworkServer:
         :return: Dictionary containing test results and artifacts
         :rtype: dict
         """
+        workspace_dir = None
         try:
             # Save all suites to disk
             workspace_dir = RobotFrameworkServer.write_remote_suites_to_disk(suite_dict)
@@ -97,9 +106,9 @@ class RobotFrameworkServer:
         workspace_dir = os.path.abspath(os.path.join(tempfile.gettempdir(), generate_temporary_directory_name()))
         os.mkdir(workspace_dir)
 
-        for suite_name, suite_data in suites.iteritems():
+        for suite_name, suite_data in suites.items():
             full_path = os.path.join(workspace_dir, suite_name)
-            write_file_to_disk(full_path, unicode(suite_data))
+            write_file_to_disk(full_path, base64.b64decode(unicode(suite_data)))
 
         return workspace_dir
 
@@ -114,8 +123,19 @@ class RobotFrameworkServer:
         :return: output_xml, log.html, report.html
         :rtype: tuple
         """
-        log_html = read_file_from_disk(os.path.join(workspace_dir, 'log.html'))
-        report_html = read_file_from_disk(os.path.join(workspace_dir, 'report.html'))
-        output_xml = read_file_from_disk(os.path.join(workspace_dir, 'output.xml'))
+        log_html = ''
+        log_html_path = os.path.join(workspace_dir, 'log.html')
+        if os.path.exists(log_html_path):
+            log_html = read_file_from_disk(os.path.join(workspace_dir, 'log.html'))
+
+        report_html = ''
+        report_html_path = os.path.join(workspace_dir, 'report.html')
+        if os.path.exists(report_html_path):
+            report_html = read_file_from_disk(report_html_path)
+
+        output_xml = ''
+        output_xml_path = os.path.join(workspace_dir, 'output.xml')
+        if os.path.exists(output_xml_path):
+            output_xml = read_file_from_disk(output_xml_path)
 
         return output_xml, log_html, report_html

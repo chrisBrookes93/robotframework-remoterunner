@@ -15,7 +15,7 @@ def read_file_from_disk(path):
     :return: Contents of the file
     :rtype: str
     """
-    with io.open(path, 'r', encoding='utf-8') as fp:
+    with open(path, 'rb') as fp:
         return fp.read()
 
 
@@ -28,7 +28,7 @@ def write_file_to_disk(path, file_contents):
     :param file_contents: Contents of the file
     :type file_contents: str
     """
-    with io.open(path, 'w', encoding='utf-8') as fp:
+    with open(path, 'wb') as fp:
         fp.write(file_contents)
 
 

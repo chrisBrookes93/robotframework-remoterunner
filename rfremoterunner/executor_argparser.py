@@ -18,7 +18,7 @@ class ExecutorArgumentParser:
 
         # Split the args based on whether they've for the executor, or whether they need to be passed to the robot run
         self.robot_run_args = {}
-        for arg_name, arg_val in parsed_args.__dict__.iteritems():
+        for arg_name, arg_val in parsed_args.__dict__.items():
             if arg_name in ROBOT_RUN_ARGS:
                 if arg_val is not None:
                     self.robot_run_args[arg_name] = arg_val
@@ -87,7 +87,7 @@ class ExecutorArgumentParser:
         :return: Path to where the log.html file should be saved
         :rtype: str
         """
-        return self._resolve_output_path(self.log, 'log.html')
+        return self._resolve_output_path(self.log, 'remote_log.html')
 
     def get_output_xml_output_location(self):
         """
@@ -96,7 +96,7 @@ class ExecutorArgumentParser:
         :return: Path to where the output.xml file should be saved
         :rtype: str
         """
-        return self._resolve_output_path(self.output, 'output.xml')
+        return self._resolve_output_path(self.output, 'remote_output.xml')
 
     def get_report_html_output_location(self):
         """
@@ -105,7 +105,7 @@ class ExecutorArgumentParser:
         :return: Path to where the report.html file should be saved
         :rtype: str
         """
-        return self._resolve_output_path(self.report, 'report.html')
+        return self._resolve_output_path(self.report, 'remote_report.html')
 
     def _resolve_output_path(self, argument_val, filename):
         """
