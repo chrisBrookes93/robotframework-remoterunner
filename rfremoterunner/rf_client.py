@@ -4,9 +4,10 @@ from rfremoterunner.utils import read_file_from_disk, normalize_xmlrpc_address
 try:
     # Python 2
     from xmlrpclib import ServerProxy
-except:
+    from xmlrpclib import Binary
+except ImportError:
     # Python 3
-    from xmlrpc.client import ServerProxy
+    from xmlrpc.client import ServerProxy, Binary
 
 
 DEFAULT_PORT = 1471
@@ -26,6 +27,18 @@ class RemoteFrameworkClient:
         self._client = ServerProxy(self._address)
 
     def execute_run(self, suite_list, robot_arg_dict):
+        """
+        Sources a series of test suites and then makes the RPC call to the
+        slave to execute the robot run.
+
+        :param suite_list: List of paths to test suites or directories containing test suites
+        :type suite_list: list
+        :param robot_arg_dict: Dictionary of arguments to pass to robot.run
+        :type robot_arg_dict: dict
+
+        :return: Dictionary containing stdout/err, log.html, output.xml & report.html
+        :rtype: dict
+        """
         # A user may have specified directory(s) amongst paths to suites, so parse and retrieve them all
         complete_ts_dict = self._source_all_test_suites(suite_list)
 
@@ -34,11 +47,6 @@ class RemoteFrameworkClient:
 
         # Make the RPC
         response = self._client.execute_robot_run(complete_ts_dict, robot_arg_dict)
-
-        # Unbase64 the stdout/stderr
-        std_out_err = response.get('std_out_err')
-        if std_out_err:
-            response['std_out_err'] = base64.b64decode(std_out_err)
 
         return response
 
@@ -59,9 +67,12 @@ class RemoteFrameworkClient:
         for suite in suite_list:
             file_path, file_ext = os.path.splitext(suite)
             if file_ext:
-                suite_contents = read_file_from_disk(suite)
-                filename = os.path.basename(suite)
-                ret_val[filename] = base64.b64encode(suite_contents)
+                if os.path.exists(suite):
+                    suite_contents = read_file_from_disk(suite)
+                    filename = os.path.basename(suite)
+                    ret_val[filename] = Binary(suite_contents)
+                else:
+                    print('{} does not exist, skipping'.format(suite))
             else:
                 suite_dict = RemoteFrameworkClient._fetch_suites_in_directory(suite)
                 ret_val.update(suite_dict)
@@ -91,5 +102,5 @@ class RemoteFrameworkClient:
                     full_path = os.path.join(directory, dir_item)
                     suite_name = os.path.basename(dir_item)
                     suite_data = read_file_from_disk(full_path)
-                    ret_val[suite_name] = base64.b64encode(suite_data)
+                    ret_val[suite_name] = Binary(suite_data)
         return ret_val

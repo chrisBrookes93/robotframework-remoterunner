@@ -1,10 +1,8 @@
 """
 TODO -
-README
 -h docs
 unit tests
-Python3 support - tox
-Turn into a package
+Python3 support
 publish to PyPi
 """
 import sys
@@ -16,6 +14,7 @@ from rfremoterunner.rf_client import RemoteFrameworkClient
 
 if six.PY3:
     unicode = str
+
 
 def run_executor():
     """
@@ -38,17 +37,17 @@ def run_executor():
     # Write the log.html, report.html, output.xml
     if result.get('output_xml'):
         output_xml_path = arg_parser.get_output_xml_output_location()
-        write_file_to_disk(arg_parser.get_output_xml_output_location(), unicode(result['output_xml']))
+        write_file_to_disk(arg_parser.get_output_xml_output_location(), result['output_xml'].data)
         print('Local Output:  ' + output_xml_path)
 
     if result.get('log_html'):
-        log_html_path = arg_parser.get_log_file_output_location()
-        write_file_to_disk(log_html_path, unicode(result['log_html']))
+        log_html_path = arg_parser.get_log_html_output_location()
+        write_file_to_disk(log_html_path, result['log_html'].data)
         print('Local Log:     ' + log_html_path)
 
     if result.get('report_html'):
         report_html_path = arg_parser.get_report_html_output_location()
-        write_file_to_disk(report_html_path, unicode(result['report_html']))
+        write_file_to_disk(report_html_path, result['report_html'].data)
         print('Local Report:  ' + report_html_path)
 
 

@@ -1,5 +1,5 @@
 import unittest
-from rfremoterunner.utils import read_file_from_disk, write_file_to_disk, generate_temporary_directory_name, normalize_xmlrpc_address
+from rfremoterunner.utils import generate_temporary_directory_name, normalize_xmlrpc_address
 
 
 class TestUtils(unittest.TestCase):

@@ -92,7 +92,7 @@ Example usage:
 with ```robot.run``` (e.g. ```--include Tag1 --include Tag2```)
 
 ## Future Features:
-- Ship over a Test Suite's Resource & Library dependencies.
+- Ship over a Test Suite's Resource & Library dependencies. (Coming very soon!)
 - Implement a ``--debug`` flag that will output verbose logs and will not delete the temporary directory on the slave 
 machine after execution.
 - Verify Test Suites are valid before invoking the slave runner.

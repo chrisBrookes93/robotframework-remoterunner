@@ -11,7 +11,7 @@ class ExecutorArgumentParser:
         Constructor for ExecutorArgumentParser
         
         :param args: Arguments to process (probably stdin)
-        :type args: dict
+        :type args: list
         """
         self._parser = self._init_parser()
         parsed_args = self._parser.parse_args(args)
@@ -80,7 +80,7 @@ class ExecutorArgumentParser:
                                  'level in log files. Examples: --loglevel DEBUG --loglevel DEBUG:INFO')
         return parser
 
-    def get_log_file_output_location(self):
+    def get_log_html_output_location(self):
         """
         Determine the local output file location of the log.html based on the input arguments
 

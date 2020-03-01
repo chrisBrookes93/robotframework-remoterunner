@@ -1,22 +1,25 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="robotframework-remoterunner",
-    version="1.0.0",
-    author="Chris Brookes",
-    description="A lightweight, standalone RobotFramework agent that can be used as an alternative to a Jenkins runslave. "
-                "This runslave allows Robot Tests to be executed remotely. This package also includes the invoking script.",
+    name='robotframework-remoterunner',
+    version='1.0.0',
+    author='Chris Brookes',
+    description='This library provides a robotframework slave, and accompanying robot executor script that allows you '
+                'to run Robot Framework Test Suites remotely. It\'s designed to be a lightweight agent and can be used '
+                'as an alternative, or with a CI Agent (e.g. Jenkins Slave).',
     long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/chrisBrookes93/robotframework-remotrunner",
+    long_description_content_type='text/markdown',
+    url='https://github.com/chrisBrookes93/robotframework-remotrunner',
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 2.7",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
     ],
     install_requires=[
        'robotframework',

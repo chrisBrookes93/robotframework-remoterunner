@@ -1,6 +1,5 @@
 import tempfile
 import os
-import base64
 import shutil
 import six
 from robot.run import run
@@ -9,9 +8,11 @@ try:
     # Python 2
     from StringIO import StringIO
     from SimpleXMLRPCServer import SimpleXMLRPCServer
-except:
+    from xmlrpclib import Binary
+except ImportError:
     # Python3
     from xmlrpc.server import SimpleXMLRPCServer
+    from xmlrpc.client import Binary
     from io import StringIO
 
 if six.PY3:
@@ -65,7 +66,7 @@ class RobotFrameworkServer:
         workspace_dir = None
         try:
             # Save all suites to disk
-            workspace_dir = RobotFrameworkServer.write_remote_suites_to_disk(suite_dict)
+            workspace_dir = RobotFrameworkServer._write_remote_suites_to_disk(suite_dict)
 
             # Change the CWD
             old_cwd = os.getcwd()
@@ -81,19 +82,27 @@ class RobotFrameworkServer:
                 **robot_args)
             os.chdir(old_cwd)
 
+            stdout_err_val = std_out_err.getvalue()
+            # An annoying encoding issue I haven't worked out yet
+            if six.PY2:
+                stdout_err_val = Binary(bytes(stdout_err_val))
+            else:
+                stdout_err_val = Binary(stdout_err_val.encode())
+
+            std_out_err.close()
             # Read the test artifacts from disk
-            output_xml, log_html, report_html = RobotFrameworkServer.read_robot_artifacts_from_disk(workspace_dir)
+            output_xml, log_html, report_html = RobotFrameworkServer._read_robot_artifacts_from_disk(workspace_dir)
         finally:
             if workspace_dir:
                 shutil.rmtree(workspace_dir)
 
-        return {'std_out_err': base64.b64encode(std_out_err.getvalue()),
-                'output_xml': output_xml,
-                'log_html': log_html,
-                'report_html': report_html}
+        return {'std_out_err': stdout_err_val,
+                'output_xml': Binary(output_xml),
+                'log_html': Binary(log_html),
+                'report_html': Binary(report_html)}
 
     @staticmethod
-    def write_remote_suites_to_disk(suites):
+    def _write_remote_suites_to_disk(suites):
         """
         Create a directory in the temporary directory and write all test suites to disk
 
@@ -108,12 +117,12 @@ class RobotFrameworkServer:
 
         for suite_name, suite_data in suites.items():
             full_path = os.path.join(workspace_dir, suite_name)
-            write_file_to_disk(full_path, base64.b64decode(unicode(suite_data)))
+            write_file_to_disk(full_path, suite_data.data)
 
         return workspace_dir
 
     @staticmethod
-    def read_robot_artifacts_from_disk(workspace_dir):
+    def _read_robot_artifacts_from_disk(workspace_dir):
         """
         Read and return the contents of output.xml, log.html, report.html
 
