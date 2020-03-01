@@ -1,4 +1,6 @@
 Robot Framework Remote Runner
+[![Build Status](https://gitlab.com/chrisBrookes93/robotframework-remoterunner/badges/gitlab_integration/pipeline.svg)](https://gitlab.com/chrisBrookes93/robotframework-remoterunner)
+
 
 Usage:
 
