@@ -14,8 +14,9 @@ test:
   - eval "$(pyenv init -)"
   - eval "$(pyenv virtualenv-init -)"
   # Install the python versions
-  #- pyenv install -v 3.7.2
   - pyenv install -v 2.7.16
+  - pyenv install -v 3.7.2
+  - pyenv install -v 3.8.2
   - pip install tox
   # Install the package
   - pip install -r test-requirements.txt

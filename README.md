@@ -32,6 +32,8 @@ Once installed the slave can be launched by executing the ```rfremoterunner.runs
 C:\python -m rfremoterunner.runslave -h
 usage: __main__.py [-h] [-a ADDRESS] [-p PORT] [-d]
 
+Script to launch the robotframework slave.
+
 optional arguments:
   -h, --help            show this help message and exit
   -a ADDRESS, --address ADDRESS
@@ -49,7 +51,12 @@ Listening on 127.0.0.1:1471
 Once installed a remote robot run can be executed by running the ````rfremoterunner.runslave```` package:
 ```bash
 C:\python -m rfremoterunner.executerun -h
-usage: __main__.py [-h] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG] [-r REPORT] [-i INCLUDE] [-e EXCLUDE] [-t TEST] [-s SUITE] [-L LOGLEVEL] host suites [suites ...]
+usage: __main__.py [-h] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG] [-r REPORT]
+                   [-i INCLUDE] [-e EXCLUDE] [-t TEST] [-s SUITE]
+                   [-L LOGLEVEL]
+                   host suites [suites ...]
+
+Script to execute a remote robot run
 
 positional arguments:
   host                  IP or Hostname of the server to execute the robot run on. You can optionally specify the port the server is listening on by adding ":<port>". If not specified the

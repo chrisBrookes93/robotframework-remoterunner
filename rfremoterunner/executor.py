@@ -1,10 +1,3 @@
-"""
-TODO -
--h docs
-unit tests
-Python3 support
-publish to PyPi
-"""
 import sys
 import os
 import six

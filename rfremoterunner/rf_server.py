@@ -112,7 +112,8 @@ class RobotFrameworkServer:
         :return: An absolute path to the directory created
         :rtype: str
         """
-        workspace_dir = os.path.abspath(os.path.join(tempfile.gettempdir(), generate_temporary_directory_name()))
+        workspace_dir = os.path.abspath(os.path.expandvars(os.path.join(tempfile.gettempdir(),
+                                                                        generate_temporary_directory_name())))
         os.mkdir(workspace_dir)
 
         for suite_name, suite_data in suites.items():

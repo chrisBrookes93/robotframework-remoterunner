@@ -33,7 +33,7 @@ class ExecutorArgumentParser:
         :return: Argument parser instance
         :rtype: ArgumentParser
         """
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(description='Script to execute a remote robot run')
         parser.add_argument('host',
                             help='IP or Hostname of the server to execute the robot run on. You can optionally specify '
                                  'the port the server is listening on by adding ":<port>". If not specified the port '

@@ -19,7 +19,7 @@ def parse_args():
     :return: Parsed input arguments
     :rtype: namespace
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Script to launch the robotframework slave.')
     parser.add_argument('-a', '--address', help='Address to bind to. Default is localhost', default='127.0.0.1')
     parser.add_argument('-p', '--port', help='Port to listen on. Default is 1471', default=1471, type=int)
     parser.add_argument('-d', '--debug', help='If set the temporary directory will not be deleted after a robot run',
