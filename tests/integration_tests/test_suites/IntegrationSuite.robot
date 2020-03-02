@@ -8,7 +8,7 @@ Basic
     # Start the slave
     ${slave_handle}=    Start Process    python    -m    rfremoterunner.runslave
     Process Should Be Running    ${slave_handle}    Failed to launch the slave
-    ${lsof_result}=    Run Process    lsof -i -P -n | grep LISTEN    shell=${True}
+    ${lsof_result}=    Run Process    netstat -tulpn | grep LISTEN    shell=${True}
     Log    ${lsof_result.stdout}
     Log    ${lsof_result.stderr}
     # Now run the Executor
