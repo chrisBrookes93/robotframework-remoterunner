@@ -8,12 +8,17 @@ class TestExecutorArgumentParser(unittest.TestCase):
     def setUp(self):
         self.curr_dir = os.path.abspath(os.path.dirname(__file__))
         self.suite_dir = os.path.join(self.curr_dir, '..', 'integration_tests', 'resources')
+        self.temp_cwd = os.getcwd()
+        os.chdir(self.curr_dir)
+
+    def tearDown(self):
+        os.chdir(self.temp_cwd)
 
     def test_get_log_html_output_location_default(self):
         input_args = ['127.0.0.1', self.suite_dir]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_log_html_output_location()
-        expected_val = os.path.join(self.curr_dir, 'remote_log.html')
+        expected_val = os.path.abspath(os.path.join(self.curr_dir, 'remote_log.html'))
         self.assertEqual(expected_val, actual_val)
 
     def test_get_log_html_output_location_outputdir_specified(self):

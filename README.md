@@ -46,7 +46,7 @@ Listening on 127.0.0.1:1471
 ### executerun
 Once installed a remote robot run can be executed by running the ````rfremoterunner.runslave```` package:
 ```bash
-C:\ python -m rfremoterunner.executerun -h
+C:\python -m rfremoterunner.executerun -h
 usage: __main__.py [-h] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG] [-r REPORT] [-i INCLUDE] [-e EXCLUDE] [-t TEST] [-s SUITE] [-L LOGLEVEL] host suites [suites ...]
 
 positional arguments:
@@ -83,7 +83,26 @@ The executor script currently supports a subset of the arguments that ```robot.r
 
 Example usage:
 ```bash
-<TODO>
+C:\python -m rfremoterunner.executerun 127.0.0.1 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ../
+==============================================================================
+T1                                                                            
+==============================================================================
+TC1                                                                   | PASS |
+------------------------------------------------------------------------------
+TC2                                                                   | FAIL |
+'False' should be true.
+------------------------------------------------------------------------------
+T1                                                                    | FAIL |
+2 critical tests, 1 passed, 1 failed
+2 tests total, 1 passed, 1 failed
+==============================================================================
+Output:  C:\Users\user1\AppData\Local\Temp\rf_workspace_778f14bb-0dcb-46d1-a7ff-c8b9c5a9f2f0\output.xml
+Log:     C:\Users\user1\AppData\Local\Temp\rf_workspace_778f14bb-0dcb-46d1-a7ff-c8b9c5a9f2f0\log.html
+Report:  C:\Users\user1\AppData\Local\Temp\rf_workspace_778f14bb-0dcb-46d1-a7ff-c8b9c5a9f2f0\report.html
+
+Local Output:  C:\DEV\robotframework-slave\tests\integration_tests\test_suites\remote_output.xml
+Local Log:     C:\DEV\robotframework-slave\tests\integration_tests\test_suites\remote_log.html
+Local Report:  C:\DEV\robotframework-slave\tests\integration_tests\test_suites\remote_report.html
 ```
 
 ## Current Limitations:
