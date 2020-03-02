@@ -1,5 +1,7 @@
 # Robot Framework Remote Runner
 
+[![Build Status](https://gitlab.com/chrisBrookes93/robotframework-remoterunner/badges/gitlab_integration/pipeline.svg)](https://gitlab.com/chrisBrookes93/robotframework-remoterunner)
+
 This library provides a robotframework slave, and accompanying robot executor script that allows you to run 
 Robot Framework Test Suites remotely. It's designed to be a lightweight agent and can be used as an alternative, 
 or with a CI Agent (e.g. Jenkins Slave). The executor script parses Test Suites and packages them up before making an RPC 
