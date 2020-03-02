@@ -1,5 +1,6 @@
 import unittest
 import os
+import tempfile
 from rfremoterunner.executor_argparser import ExecutorArgumentParser
 
 
@@ -43,7 +44,8 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_log_html_output_location_log_specified_absolute(self):
-        expected_val = os.path.expandvars('%TMP%/results/log.html')
+        temp_dir = tempfile.gettempdir()
+        expected_val = os.path.abspath(os.path.join(temp_dir, 'test_results', 'log.html'))
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -51,7 +53,7 @@ class TestExecutorArgumentParser(unittest.TestCase):
                       '--log', expected_val]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_log_html_output_location()
-        self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
+        self.assertEqual(expected_val, actual_val)
 
     def test_get_report_html_output_location_default(self):
         input_args = ['127.0.0.1', self.suite_dir]
@@ -82,7 +84,8 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_report_html_output_location_log_specified_absolute(self):
-        expected_val = os.path.expandvars('%TMP%/results/report.html')
+        temp_dir = tempfile.gettempdir()
+        expected_val = os.path.abspath(os.path.join(temp_dir, 'test_results', 'report.html'))
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -90,7 +93,7 @@ class TestExecutorArgumentParser(unittest.TestCase):
                       '--report', expected_val]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_report_html_output_location()
-        self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
+        self.assertEqual(expected_val, actual_val)
 
     def test_get_output_xml_output_location_default(self):
         input_args = ['127.0.0.1', self.suite_dir]
@@ -121,7 +124,8 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_output_xml_output_location_log_specified_absolute(self):
-        expected_val = os.path.expandvars('%TMP%/results/output.xml')
+        temp_dir = tempfile.gettempdir()
+        expected_val = os.path.abspath(os.path.join(temp_dir, 'test_results', 'output.xml'))
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -129,4 +133,4 @@ class TestExecutorArgumentParser(unittest.TestCase):
                       '--output', expected_val]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_output_xml_output_location()
-        self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
+        self.assertEqual(expected_val, actual_val)
