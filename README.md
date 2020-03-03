@@ -1,6 +1,6 @@
 # Robot Framework Remote Runner
 
-[![Build Status](https://gitlab.com/chrisBrookes93/robotframework-remoterunner/badges/gitlab_integration/pipeline.svg)](https://gitlab.com/chrisBrookes93/robotframework-remoterunner)
+[![Build Status](https://gitlab.com/chrisBrookes93/robotframework-remoterunner/badges/proper_python_package/pipeline.svg)](https://gitlab.com/chrisBrookes93/robotframework-remoterunner)
 
 This library provides a robotframework slave, and accompanying robot executor script that allows you to run 
 Robot Framework Test Suites remotely. It's designed to be a lightweight agent and can be used as an alternative, 
@@ -15,7 +15,7 @@ Python Dependencies:
 * six
 
 To install the package run:
-```bash
+```text
 pip install -r requirements.txt
 ```
 This package will need to be installed on the slave host, and the host you wish to execute the remote run from.
@@ -28,7 +28,7 @@ This library contains two scripts:
 ### runslave
 
 Once installed the slave can be launched by executing the ```rfremoterunner.runslave``` package:
-```bash
+```text
 C:\python -m rfremoterunner.runslave -h
 usage: __main__.py [-h] [-a ADDRESS] [-p PORT] [-d]
 
@@ -42,14 +42,14 @@ optional arguments:
   -d, --debug           If set the temporary directory will not be deleted after a robot run
 ```
 Example usage:
-```bash
+```text
 C:\python -m rfremoterunner.runslave -a 127.0.0.1 -p 1471
 Listening on 127.0.0.1:1471
 ```
 
 ### executerun
 Once installed a remote robot run can be executed by running the ````rfremoterunner.runslave```` package:
-```bash
+```text
 C:\python -m rfremoterunner.executerun -h
 usage: __main__.py [-h] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG] [-r REPORT]
                    [-i INCLUDE] [-e EXCLUDE] [-t TEST] [-s SUITE]
@@ -91,7 +91,7 @@ optional arguments:
 The executor script currently supports a subset of the arguments that ```robot.run``` supports.
 
 Example usage:
-```bash
+```text
 C:\python -m rfremoterunner.executerun 127.0.0.1 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ../
 ==============================================================================
 T1                                                                            
