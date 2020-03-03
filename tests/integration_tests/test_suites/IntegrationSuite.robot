@@ -12,7 +12,7 @@ Basic
     Log    ${lsof_result.stdout}
     Log    ${lsof_result.stderr}
     # Now run the Executor
-    ${executor_result}=    Run Process    python    -m    rfremoterunner.executerun    127.0.0.1    ${CURDIR}/../resources/    --outputdir    ${CURDIR}
+    ${executor_result}=    Run Process    python    -m    rfremoterunner.executerun    0.0.0.0    ${CURDIR}/../resources/    --outputdir    ${CURDIR}
     Should Be Equal As Integers    ${executor_result.rc}    ${0}    executerun failed with: ${executor_result.stderr}
     Log    ${executor_result.stdout}
     Log    ${executor_result.stderr}
