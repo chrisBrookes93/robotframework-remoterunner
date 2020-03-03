@@ -43,8 +43,8 @@ optional arguments:
 ```
 Example usage:
 ```text
-C:\python -m rfremoterunner.runslave -a 127.0.0.1 -p 1471
-Listening on 127.0.0.1:1471
+C:\python -m rfremoterunner.runslave -a 192.168.56.102 -p 1471
+Listening on 192.168.56.102:1471
 ```
 
 ### executerun
@@ -92,7 +92,7 @@ The executor script currently supports a subset of the arguments that ```robot.r
 
 Example usage:
 ```text
-C:\python -m rfremoterunner.executerun 127.0.0.1 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ../
+C:\python -m rfremoterunner.executerun 192.168.56.102 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ../
 ==============================================================================
 T1                                                                            
 ==============================================================================
