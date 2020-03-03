@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='robotframework-remoterunner',
-    version='1.0.0',
+    version='1.0.1',
     author='Chris Brookes',
     description='This library provides a robotframework slave, and accompanying robot executor script that allows you '
                 'to run Robot Framework Test Suites remotely. It\'s designed to be a lightweight agent and can be used '
