@@ -12,6 +12,7 @@ setuptools.setup(
                 'as an alternative, or with a CI Agent (e.g. Jenkins Slave).',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.0.1.tar.gz",
     url='https://github.com/chrisBrookes93/robotframework-remotrunner',
     packages=setuptools.find_packages(),
     classifiers=[
