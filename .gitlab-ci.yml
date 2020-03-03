@@ -3,23 +3,11 @@ stages:
 
 test:
   stage: test
-  image: ubuntu:bionic
   script:
   - apt-get update -qy
-  - DEBIAN_FRONTEND=noninteractive apt-get install -y python-dev python-pip
+  - apt-get install -y python-dev python-pip
   # Install the dependencies for pyenv (defined here: https://github.com/pyenv/pyenv/wiki/Common-build-problems)
-  - DEBIAN_FRONTEND=noninteractive apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
-  - DEBIAN_FRONTEND=noninteractive apt-get install net-tools
-  - apt-get install -y git
-  - ifconfig
-  # Install pyenv
-  - curl https://pyenv.run | bash
-  - export PATH="~/.pyenv/bin:$PATH"
-  - eval "$(pyenv init -)"
-  - eval "$(pyenv virtualenv-init -)"
-  # Install the python versions
-  # - pyenv install -v 2.7.16
-  - pyenv install -v 3.7.2
+  - apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
   - pip install tox
   # Install the package
   - pip install -r test-requirements.txt
@@ -28,6 +16,5 @@ test:
   artifacts:
       paths:
         - py27_log.html
-        - py37_log.html
       expire_in: 1 week
       when: on_failure

@@ -6,13 +6,10 @@ Library           OperatingSystem
 Basic
     [Setup]
     # Start the slave
-    ${slave_handle}=    Start Process    python    -m    rfremoterunner.runslave    -a    0.0.0.0    -p    1471
+    ${slave_handle}=    Start Process    python    -m    rfremoterunner.runslave    -a    127.0.0.1    -p    1471
     Process Should Be Running    ${slave_handle}    Failed to launch the slave
-    ${lsof_result}=    Run Process    netstat     -pnltu
-    Log    ${lsof_result.stdout}
-    Log    ${lsof_result.stderr}
     # Now run the Executor
-    ${executor_result}=    Run Process    python    -m    rfremoterunner.executerun    0.0.0.0    ${CURDIR}/../resources/    --outputdir    ${CURDIR}
+    ${executor_result}=    Run Process    python    -m    rfremoterunner.executerun    127.0.0.1    ${CURDIR}/../resources/    --outputdir    ${CURDIR}
     Should Be Equal As Integers    ${executor_result.rc}    ${0}    executerun failed with: ${executor_result.stderr}
     Log    ${executor_result.stdout}
     Log    ${executor_result.stderr}
