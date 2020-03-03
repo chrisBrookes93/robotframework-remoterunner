@@ -6,7 +6,7 @@ Library           OperatingSystem
 Basic
     [Setup]
     # Start the slave
-    ${slave_handle}=    Start Process    python    -m    rfremoterunner.runslave
+    ${slave_handle}=    Start Process    python    -m    rfremoterunner.runslave    -a    0.0.0.0    -p    1471
     Process Should Be Running    ${slave_handle}    Failed to launch the slave
     ${lsof_result}=    Run Process    netstat -tulpn | grep LISTEN     shell=${True}
     Log    ${lsof_result.stdout}
