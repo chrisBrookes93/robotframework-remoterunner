@@ -1,0 +1,7 @@
+*** Settings ***
+Resource          ../primary_dependencies/secondary_dependencies/tertiary_dependencies/Res3.robot
+Library           ../primary_dependencies/secondary_dependencies/tertiary_dependencies/Lib2.py
+
+*** Test Cases ***
+S_TS3.1
+    Log    1

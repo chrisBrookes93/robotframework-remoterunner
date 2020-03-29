@@ -1,6 +1,14 @@
 import argparse
-
+import logging
+import sys
 from rfremoterunner.rf_server import RobotFrameworkServer
+
+logger = logging.getLogger('rfremoterunner.slave')
+out_hdlr = logging.StreamHandler(sys.stdout)
+out_hdlr.setFormatter(logging.Formatter('%(message)s'))
+logger.addHandler(out_hdlr)
+logger.setLevel(logging.INFO)
+out_hdlr.setLevel(logging.INFO)
 
 
 def run_slave():
@@ -8,7 +16,11 @@ def run_slave():
     Run the Robot Framework Slave
     """
     args = parse_args()
-    rfc = RobotFrameworkServer(args.address, args.port, args.debug)
+    level = logging.DEBUG if args.debug else logging.INFO
+    logger.setLevel(level)
+    out_hdlr.setLevel(level)
+
+    rfc = RobotFrameworkServer(args.address, args.port)
     rfc.serve()
 
 

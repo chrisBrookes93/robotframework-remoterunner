@@ -15,6 +15,52 @@ class TestExecutorArgumentParser(unittest.TestCase):
     def tearDown(self):
         os.chdir(self.temp_cwd)
 
+    def test_args_set_correctly(self):
+        expected_host = '192.168.56.1'
+        expected_suites = self.suite_dir
+        expected_output_dir = '../../'
+        expected_output_xml = './out.xml'
+        expected_log_file = './l.html'
+        expected_report_file = './r.html'
+        expected_extension = 'html:tsv'
+        expected_include = 'ts_*'
+        expected_exclude = 'nts_*'
+        expected_test = 'a.b.c.*'
+        expected_suite = 'X.Y:X.Z:Y.A'.split(':')
+        expected_log_level = 'DEBUG'
+
+        input_args = [expected_host,
+                      expected_suites,
+                      '--outputdir', expected_output_dir,
+                      '--output', expected_output_xml,
+                      '--log', expected_log_file,
+                      '--report', expected_report_file,
+                      '--debug',
+                      '--extension', expected_extension,
+                      '--include', expected_include,
+                      '--exclude', expected_exclude,
+                      '--test', expected_test,
+                      '--suite', 'X.Y:X.Z:Y.A',
+                      '--loglevel', expected_log_level,
+                      ]
+        eap = ExecutorArgumentParser(input_args)
+        self.assertEqual(eap.host, expected_host)
+        self.assertEqual(eap.suites, [expected_suites])
+        self.assertEqual(eap.outputdir, expected_output_dir)
+        self.assertEqual(eap.output, expected_output_xml)
+        self.assertEqual(eap.log, expected_log_file)
+        self.assertEqual(eap.report, expected_report_file)
+        self.assertTrue(eap.debug)
+        self.assertEqual(eap.extension, expected_extension)
+        self.assertEqual(eap.include, expected_include)
+        self.assertEqual(eap.exclude, expected_exclude)
+        self.assertEqual(eap.test, expected_test)
+        self.assertEqual(eap.suite, expected_suite)
+        self.assertEqual(eap.loglevel, expected_log_level)
+        self.assertListEqual(
+            sorted(['loglevel', 'include', 'test', 'exclude', 'suite']),
+            sorted(eap.robot_run_args.keys()))
+
     def test_get_log_html_output_location_default(self):
         input_args = ['127.0.0.1', self.suite_dir]
         eap = ExecutorArgumentParser(input_args)
