@@ -3,8 +3,5 @@
 *.xml
 *.egg-info/
 .tox/*
-/tests/unit_tests/.coverage
-/htmlcov/*
-htmlcov/
-/.coverage
-/tests/.coverage
+htmlcov/*
+*/.coverage

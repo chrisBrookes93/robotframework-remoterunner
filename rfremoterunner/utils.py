@@ -36,7 +36,7 @@ def write_file_to_disk(path, file_contents, encoding='utf-8'):
     :param path: Path to write to
     :type path: str
     :param file_contents: Contents of the file
-    :type file_contents: str
+    :type file_contents: str | unicode
     :param encoding: Encoding of the file
     :type encoding: str
     """
@@ -66,7 +66,7 @@ def normalize_xmlrpc_address(address, default_port):
 def calculate_ts_parent_path(suite):
     """
     Parses up a test suite's ancestry and builds up a file path. This will then be used to create the correct test
-    suite hierarchy on the remote machine
+    suite hierarchy on the remote host
 
     :param suite: test suite to parse the ancestry for
     :type suite: robot.running.model.TestSuite

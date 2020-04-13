@@ -21,14 +21,14 @@ class ExecutorArgumentParser:
         if parsed_args.suite:
             parsed_args.suite = parsed_args.suite.split(':')
 
-        # Split the args based on whether they've for the executor, or whether they need to be passed to the robot run
+        # Split the args based on whether they're for the executor, or whether they need to be passed into robot.run on
+        # the remote host
         self.robot_run_args = {}
         for arg_name, arg_val in parsed_args.__dict__.items():
             if arg_name in ROBOT_RUN_ARGS:
                 if arg_val is not None:
                     self.robot_run_args[arg_name] = arg_val
             setattr(self, arg_name, arg_val)
-
 
     @staticmethod
     def _init_parser():
@@ -38,7 +38,7 @@ class ExecutorArgumentParser:
         :return: Argument parser instance
         :rtype: ArgumentParser
         """
-        parser = argparse.ArgumentParser(description='Script to execute a remote robot run')
+        parser = argparse.ArgumentParser(description='Script to initiate a remote robot framework test execution')
         parser.add_argument('host',
                             help='IP or Hostname of the server to execute the robot run on. You can optionally specify '
                                  'the port the server is listening on by adding ":<port>". If not specified the port '
@@ -62,14 +62,10 @@ class ExecutorArgumentParser:
                                  'be further processed with Rebot tool. Default: remote_output.xml')
         parser.add_argument('-l', '--log',
                             help='Where to save the HTML Log file on this machine once its been retrieved. Default: '
-                                 'remote_output.html')
+                                 'remote_log.html')
         parser.add_argument('-r', '--report',
                             help='Where to save the HTML Report file on this machine once its been retrieved. Default: '
-                                 'remote_output.html')
-
-        # Although these arguments are ones that robot accepts, they won't be passed into the remote robot execution.
-        # Instead they are used on the local machine to filter test suites so that unnecessary files are not
-        # transferred over to the remote side.
+                                 'remote_report.html')
         parser.add_argument('-F', '--extension',
                             help='Parse only files with this extension when executing a directory. Has no effect when '
                                  'running individual files or when using resource files. If more than one extension is '
@@ -82,7 +78,7 @@ class ExecutorArgumentParser:
                                  'concatenating with a colon. For example `-s X.Y` selects suite `Y` '
                                  'only if its parent is `X`. -s X:Y:Z selects X, Y & Z')
 
-        # Arguments passed into the robot run on the remote host:
+        # Arguments passed into robot.run on the remote host:
         parser.add_argument('-t', '--test',
                             help='Select test cases to run by name or long name. Name is case insensitive and'
                                  ' it can also be a simple pattern where `*` matches anything and `?` matches any '
@@ -106,7 +102,7 @@ class ExecutorArgumentParser:
         """
         Determine the local output file location of the log.html based on the input arguments
 
-        :return: Path to where the log.html file should be saved
+        :return: Path to where the log html file should be saved
         :rtype: str
         """
         return self._resolve_output_path(self.log, 'remote_log.html')
@@ -115,7 +111,7 @@ class ExecutorArgumentParser:
         """
         Determine the local output file location of the output.xml based on the input arguments
 
-        :return: Path to where the output.xml file should be saved
+        :return: Path to where the output xml file should be saved
         :rtype: str
         """
         return self._resolve_output_path(self.output, 'remote_output.xml')
@@ -124,7 +120,7 @@ class ExecutorArgumentParser:
         """
         Determine the local output file location of the report.html based on the input arguments
 
-        :return: Path to where the report.html file should be saved
+        :return: Path to where the report html file should be saved
         :rtype: str
         """
         return self._resolve_output_path(self.report, 'remote_report.html')

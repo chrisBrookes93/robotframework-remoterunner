@@ -13,7 +13,6 @@ from rfremoterunner.utils import normalize_xmlrpc_address, read_file_from_disk, 
 logger = logging.getLogger('rfremoterunner.executor')
 
 DEFAULT_PORT = 1471
-ROBOT_FILE_EXT = ('robot', 'txt', 'html')
 
 
 class RemoteFrameworkClient:
@@ -45,15 +44,17 @@ class RemoteFrameworkClient:
         :type extensions: str
         :param include_suites: List of strings that filter suites to include
         :type include_suites: list
-        :param robot_arg_dict: Dictionary of arguments that will be passed to robot.run() on the remote host
+        :param robot_arg_dict: Dictionary of arguments that will be passed to robot.run on the remote host
         :type robot_arg_dict: dict
 
-        :return: Dictionary containing stdout/err, log.html, output.xml, report.html, return code
+        :return: Dictionary containing stdout/err, log html, output xml, report html, return code
         :rtype: dict
         """
         # Use robot to resolve all of the test suites
         suite_list = [os.path.normpath(p) for p in suite_list]
         logger.debug('Suite List: ' + str(suite_list))
+
+        # Let robot do the heavy lifting in parsing the test suites
         builder = TestSuiteBuilder(include_suites, extension=extensions)
         suite = builder.build(*suite_list)
 
@@ -71,7 +72,7 @@ class RemoteFrameworkClient:
         """
         Parses through a Test Suite and its child Suites and packages them up into a dictionary to can be serialized
 
-        :param suite: root test suite
+        :param suite: robot test suite
         :type suite: TestSuite
         """
         # Empty suites in the hierarchy are likely directories so we're only interested in ones that contain tests
@@ -89,7 +90,7 @@ class RemoteFrameworkClient:
         Processes a TestSuite containing test cases and performs the following:
             - Parses the suite's dependencies (e.g. Library & Resource references) and adds them into the `dependencies`
             dict
-            - Corrects the path references to where the dependencies will be placed on the remote side
+            - Corrects the path references in the suite file to where the dependencies will be placed on the remote side
             - Returns a dict with metadata alongside the updated test suite file data
 
         :param suite: a TestSuite containing test cases
@@ -104,10 +105,10 @@ class RemoteFrameworkClient:
 
         # At this point `suite` is a robot.running.model.TestSuite which doesn't appear to support writing the source
         # back to disk in robot syntax. To get around this, read it from disk again into a TestCaseFile which can be
-        # modified and then converted into test suite file data
+        # modified and then converted into bytes
         tcf = TestCaseFile(source=suite.source).populate()
 
-        # Iterate through the imports of suite. `_process_dependency()` will update the path to the reference which we
+        # Iterate through the imports of suite. _process_dependency() will update the path to the reference which we
         # then copy to the TestCaseFile. From this we will produce the modified test suite file data
         for suite_imp, tcf_imp in zip(suite.resource.imports, tcf.imports):
             logger.debug('Processing dependency: `{}` for Test Suite: {}'.format(suite_imp.name, suite.name))
@@ -133,14 +134,15 @@ class RemoteFrameworkClient:
         :param dependency: dependency to process
         :type dependency: robot.model.imports.Import
         """
+        # RobotFramework will be installed on the remote machine so we don't need to bundle these
         if dependency.name not in STDLIBS:
             # Locate the dependency file
             dep_filepath = find_file(dependency.name, dependency.directory, dependency.type)
             dep_filename = os.path.basename(dep_filepath)
             logger.debug('Resolved dependency to: `{}`'.format(dependency.name))
 
-            # Change the path to the reference so that it will resolve on the remote side. The directory containing all of
-            # the dependencies will be added to the PYTHONPATH, so just the filename is sufficient
+            # Change the path to the reference so that it will resolve on the remote side. The directory containing all
+            # of the dependencies will be added to the PYTHONPATH, so just the filename is sufficient
             dependency.name = dep_filename
 
             if dep_filename not in self._dependencies:
@@ -148,7 +150,7 @@ class RemoteFrameworkClient:
                     # Import the Resource in order to parse its dependencies
                     res = ResourceFile(dep_filepath).populate()
 
-                    # A Resource may have a dependency on other Resource and Library file, also collect these
+                    # A Resource may have a dependency on other Resource and Library files, also collect these
                     for imp in res.imports:
                         logger.debug('Processing dependency: `{}` for: `{}`'.format(imp.name, dependency.name))
                         self._process_dependency(imp)
@@ -159,11 +161,8 @@ class RemoteFrameworkClient:
                     logger.debug('Patched Resource file: `{}`'.format(dependency.name))
                     self._dependencies[dep_filename] = string_io.getvalue()
                 elif dependency.type == 'Library':
-                    # We expect Robot StdLibs to already be present on the remote machine so don't bother packaging
-                    # these
-
+                    # A Library is just a python file, so read this straight from disk
                     logger.debug('Reading Python library from disk: `{}`'.format(dep_filepath))
                     self._dependencies[dep_filename] = read_file_from_disk(dep_filepath)
             else:
                 logger.debug('Dependency is already in the cache, skipping')
-

@@ -3,7 +3,7 @@ from robot.api import ExecutionResult
 
 def get_test_suite_names(output_xml_path):
     """"
-    Parses an output.xml file and returns the names of test suites that contain test cases that were executed
+    Parses an output.xml file and returns the names of test suites that contain tests that were executed
     """
     er = ExecutionResult(output_xml_path)
     return _recursively_list_test_suites(er.suite)
@@ -11,7 +11,7 @@ def get_test_suite_names(output_xml_path):
 
 def _recursively_list_test_suites(suite):
     """
-    Recursively parses a test suite tree returns the names of test suites that contain test cases that were executed
+    Recursively parses a test suite tree returns the names of test suites that contain tests that were executed
     """
     ret_val = []
     if suite.tests:

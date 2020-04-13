@@ -8,23 +8,22 @@ from rfremoterunner.rf_client import RemoteFrameworkClient
 logger = logging.getLogger('rfremoterunner.executor')
 out_hdlr = logging.StreamHandler(sys.stdout)
 out_hdlr.setFormatter(logging.Formatter('%(message)s'))
+out_hdlr.setLevel(logging.DEBUG)
 logger.addHandler(out_hdlr)
 logger.setLevel(logging.INFO)
-out_hdlr.setLevel(logging.INFO)
 
 
 def run_executor():
     """
-    Initialize and run the executor
+    Initialise and run the executor
     """
     # Parse the input arguments
     arg_parser = ExecutorArgumentParser(sys.argv[1:])
 
     level = logging.DEBUG if arg_parser.debug else logging.INFO
     logger.setLevel(level)
-    out_hdlr.setLevel(level)
 
-    # Initialize and execute the remote robot run
+    # Initialise and execute the remote robot run
     rfs = RemoteFrameworkClient(arg_parser.host, arg_parser.debug)
     result = rfs.execute_run(arg_parser.suites, arg_parser.extension, arg_parser.suite, arg_parser.robot_run_args)
 
@@ -36,7 +35,7 @@ def run_executor():
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Write the log.html, report.html, output.xml
+    # Write the log html, report html, output xml
     if result.get('output_xml'):
         output_xml_path = arg_parser.get_output_xml_output_location()
         write_file_to_disk(arg_parser.get_output_xml_output_location(), result['output_xml'].data.decode('utf-8'))

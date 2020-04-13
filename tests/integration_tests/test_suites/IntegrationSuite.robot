@@ -114,7 +114,7 @@ Suite Name Filtering
     File Should Exist    ${test_workspace}/remote_log.html
     File Should Exist    ${test_workspace}/remote_report.html
     ${expected_suites}=    Create List    Bbb Ts3
-    ${actual_suites}=    get_test_suite_names    ${test_workspace}/remote_output.xml
+    ${actual_suites}=    Get Test Suite Names    ${test_workspace}/remote_output.xml
     Lists Should Be Equal    ${expected_suites}    ${actual_suites}
 
 Specific Output Paths
@@ -198,12 +198,12 @@ Test uses Robot STDLIBs
 
 *** Keywords ***
 Test Setup
-    [Documentation]    Test done for each test. Creates a temporary workspace for the test to store artifacts
+    [Documentation]    Setup performed for each test. Creates a temporary workspace for the test to store artifacts
     ${test_workspace}=    Evaluate    tempfile.mkdtemp()    modules=tempfile
     Set Suite Variable    ${test_workspace}
 
 Test Teardown
-    [Documentation]    Teardown for all tests. Terminates and processes started by the test and deletes the temporary workspace
+    [Documentation]    Teardown for all tests. Terminates any processes started by the test and deletes the temporary workspace
     Terminate All Processes
     Remove Directory    ${test_workspace}    recursive=${True}
 

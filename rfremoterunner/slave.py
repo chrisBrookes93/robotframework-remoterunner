@@ -1,14 +1,5 @@
 import argparse
-import logging
-import sys
 from rfremoterunner.rf_server import RobotFrameworkServer
-
-logger = logging.getLogger('rfremoterunner.slave')
-out_hdlr = logging.StreamHandler(sys.stdout)
-out_hdlr.setFormatter(logging.Formatter('%(message)s'))
-logger.addHandler(out_hdlr)
-logger.setLevel(logging.INFO)
-out_hdlr.setLevel(logging.INFO)
 
 
 def run_slave():
@@ -16,11 +7,7 @@ def run_slave():
     Run the Robot Framework Slave
     """
     args = parse_args()
-    level = logging.DEBUG if args.debug else logging.INFO
-    logger.setLevel(level)
-    out_hdlr.setLevel(level)
-
-    rfc = RobotFrameworkServer(args.address, args.port)
+    rfc = RobotFrameworkServer(args.address, args.port, args.debug)
     rfc.serve()
 
 
@@ -31,10 +18,12 @@ def parse_args():
     :return: Parsed input arguments
     :rtype: namespace
     """
-    parser = argparse.ArgumentParser(description='Script to launch the robotframework slave.')
-    parser.add_argument('-a', '--address', help='Address to bind to. Default is localhost', default='127.0.0.1')
+    parser = argparse.ArgumentParser(description='Script to launch the robotframework slave. This opens an RPC port and'
+                                                 ' waits for a request to execute a robot framework test execution')
+    parser.add_argument('-a', '--address', help='Address to bind to. Default is 0.0.0.0', default='0.0.0.0')
     parser.add_argument('-p', '--port', help='Port to listen on. Default is 1471', default=1471, type=int)
-    parser.add_argument('-d', '--debug', help='If set the temporary directory will not be deleted after a robot run',
+    parser.add_argument('-d', '--debug', help='Enables debug logging and will not delete the temporary directroy after '
+                                              'a robot run',
                         action='store_true')
     return parser.parse_args()
 

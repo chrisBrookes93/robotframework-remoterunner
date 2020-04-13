@@ -29,9 +29,9 @@ class TestUtils(unittest.TestCase):
         Helper function to verify the contents of a file
 
         :param file_path: Path to the file to verify
-        :type file_path: str
+        :type file_path: str | unicode
         :param expected_file_data: Expected file data
-        :type expected_file_data: str
+        :type expected_file_data: str | unicode
         """
         if not os.path.exists(file_path):
             raise Exception('File does not exist:' + file_path)
@@ -87,4 +87,3 @@ class TestUtils(unittest.TestCase):
         ts = TestSuite()
         actual_value = calculate_ts_parent_path(ts)
         self.assertEqual(expected_value, actual_value)
-
