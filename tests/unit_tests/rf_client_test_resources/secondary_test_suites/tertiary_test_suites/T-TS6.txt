@@ -1,0 +1,6 @@
+*** Settings ***
+Library           ../../primary_dependencies/secondary_dependencies/tertiary_dependencies/Lib3.py
+
+*** Test Cases ***
+T_TS6.1
+    Log    1

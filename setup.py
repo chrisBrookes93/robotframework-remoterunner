@@ -5,33 +5,28 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='robotframework-remoterunner',
-    version='1.0.1',
+    version='1.1.0rc1',
     author='Chris Brookes',
-    description='This library provides a robotframework slave, and accompanying robot executor script that allows you '
-                'to run Robot Framework Test Suites remotely. It\'s designed to be a lightweight agent and can be used '
-                'as an alternative, or with a CI Agent (e.g. Jenkins Slave).',
+    author_email='chris-brookes93@outlook.com',
+    description='A library that provides the ability to execute RobotFramework test suites on a remote host. This comes'
+                ' in the form of a lightweight agent that runs on the remote host, and an executor script that '
+                'initiates the remote robot run. This is intended to used alongside or instead of other CI Agents.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.0.1.tar.gz",
+    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.1.0.tar.gz",
     url='https://github.com/chrisBrookes93/robotframework-remotrunner',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
+        'Framework :: Robot Framework'
         'Operating System :: OS Independent',
     ],
     install_requires=[
-       'robotframework',
+        'robotframework',
         'six'
     ]
 )
-
-
-
-
-
-
-
-
-
-
