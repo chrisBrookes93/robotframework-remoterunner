@@ -1,0 +1,7 @@
+*.pyc
+*.html
+*.xml
+*.egg-info/
+.tox/*
+htmlcov/*
+*/.coverage
