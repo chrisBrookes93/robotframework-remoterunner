@@ -9,12 +9,9 @@ from six import StringIO
 from robot.run import run
 from rfremoterunner.utils import write_file_to_disk, read_file_from_disk
 
-logger = logging.getLogger('robotframework-remoterunner.slave')
-out_hdlr = logging.StreamHandler(sys.stdout)
-out_hdlr.setFormatter(logging.Formatter('%(message)s'))
-out_hdlr.setLevel(logging.DEBUG)
-logger.addHandler(out_hdlr)
-logger.setLevel(logging.INFO)
+
+logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stdout)
+logger = logging.getLogger(__file__)
 
 DEFAULT_ADDRESS = '0.0.0.0'
 DEFAULT_PORT = 1471
@@ -40,8 +37,7 @@ class RobotFrameworkServer:
         self._port = port
         self._server = xmlrpc_server.SimpleXMLRPCServer((address, int(port)), encoding='utf-8')
         self._server.register_function(RobotFrameworkServer.execute_robot_run, self.EXECUTE_FUNC)
-        logging_level = logging.DEBUG if debug else logging.INFO
-        logger.setLevel(logging_level)
+        logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
     def serve(self):
         """
