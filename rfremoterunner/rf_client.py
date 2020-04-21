@@ -10,7 +10,7 @@ from robot.utils.robotpath import find_file
 from rfremoterunner.utils import normalize_xmlrpc_address, read_file_from_disk, calculate_ts_parent_path
 
 
-logger = logging.getLogger('rfremoterunner.executor')
+logger = logging.getLogger('robotframework-remoterunner.executor')
 
 DEFAULT_PORT = 1471
 

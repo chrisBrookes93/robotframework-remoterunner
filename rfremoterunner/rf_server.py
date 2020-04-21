@@ -9,7 +9,7 @@ from six import StringIO
 from robot.run import run
 from rfremoterunner.utils import write_file_to_disk, read_file_from_disk
 
-logger = logging.getLogger('rfremoterunner.slave')
+logger = logging.getLogger('robotframework-remoterunner.slave')
 out_hdlr = logging.StreamHandler(sys.stdout)
 out_hdlr.setFormatter(logging.Formatter('%(message)s'))
 out_hdlr.setLevel(logging.DEBUG)

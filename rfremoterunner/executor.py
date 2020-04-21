@@ -5,7 +5,7 @@ from rfremoterunner.utils import write_file_to_disk
 from rfremoterunner.executor_argparser import ExecutorArgumentParser
 from rfremoterunner.rf_client import RemoteFrameworkClient
 
-logger = logging.getLogger('rfremoterunner.executor')
+logger = logging.getLogger('robotframework-remoterunner.executor')
 out_hdlr = logging.StreamHandler(sys.stdout)
 out_hdlr.setFormatter(logging.Formatter('%(message)s'))
 out_hdlr.setLevel(logging.DEBUG)
