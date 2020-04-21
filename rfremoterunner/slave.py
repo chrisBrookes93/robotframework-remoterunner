@@ -22,7 +22,7 @@ def parse_args():
                                                  ' waits for a request to execute a robot framework test execution')
     parser.add_argument('-a', '--address', help='Address to bind to. Default is 0.0.0.0', default='0.0.0.0')
     parser.add_argument('-p', '--port', help='Port to listen on. Default is 1471', default=1471, type=int)
-    parser.add_argument('-d', '--debug', help='Enables debug logging and will not delete the temporary directroy after '
+    parser.add_argument('-d', '--debug', help='Enables debug logging and will not delete the temporary directory after '
                                               'a robot run',
                         action='store_true')
     return parser.parse_args()

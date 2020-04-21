@@ -54,18 +54,22 @@ class ExecutorArgumentParser:
         # are saved to the local machine as per configured by the arguments below
         parser.add_argument('-d', '--outputdir',
                             help='Where to create the output files on this machine once they\'ve been retrieved. The '
-                                 'default is the directory that this script is run from')
+                                 'default is the directory that this script is run from',
+                            default='.')
         parser.add_argument('-o', '--output',
                             help='Where to save the XML output file on this machine once its been retrieved. Given '
                                  'path, similarly as paths given to --log and --report is path. Other output files are '
                                  'created based on XML output files after the test execution and XML outputs can also '
-                                 'be further processed with Rebot tool. Default: remote_output.xml')
+                                 'be further processed with Rebot tool. Default: remote_output.xml',
+                            default='remote_output.xml')
         parser.add_argument('-l', '--log',
                             help='Where to save the HTML Log file on this machine once its been retrieved. Default: '
-                                 'remote_log.html')
+                                 'remote_log.html',
+                            default='remote_log.html')
         parser.add_argument('-r', '--report',
                             help='Where to save the HTML Report file on this machine once its been retrieved. Default: '
-                                 'remote_report.html')
+                                 'remote_report.html',
+                            default='remote_report.html')
         parser.add_argument('-F', '--extension',
                             help='Parse only files with this extension when executing a directory. Has no effect when '
                                  'running individual files or when using resource files. If more than one extension is '
@@ -105,7 +109,7 @@ class ExecutorArgumentParser:
         :return: Path to where the log html file should be saved
         :rtype: str
         """
-        return self._resolve_output_path(self.log, 'remote_log.html')
+        return self._resolve_output_path(self.log)
 
     def get_output_xml_output_location(self):
         """
@@ -114,7 +118,7 @@ class ExecutorArgumentParser:
         :return: Path to where the output xml file should be saved
         :rtype: str
         """
-        return self._resolve_output_path(self.output, 'remote_output.xml')
+        return self._resolve_output_path(self.output)
 
     def get_report_html_output_location(self):
         """
@@ -123,27 +127,21 @@ class ExecutorArgumentParser:
         :return: Path to where the report html file should be saved
         :rtype: str
         """
-        return self._resolve_output_path(self.report, 'remote_report.html')
+        return self._resolve_output_path(self.report)
 
-    def _resolve_output_path(self, argument_val, filename):
+    def _resolve_output_path(self, filename):
         """
         Determine a path to output a file artifact based on whether the user specified the specific path
 
-        :param argument_val: Value of the specific argument e.g. from --output
-        :type argument_val: str
         :param filename: Name of the file e.g. log.html
         :type filename: str
 
         :return: Absolute path of where to save the test artifact
         :rtype: str
         """
-        parent_dir = self.outputdir or '.'
+        ret_val = filename
 
-        if argument_val:
-            if os.path.isabs(argument_val):
-                output_path = argument_val
-            else:
-                output_path = os.path.abspath(os.path.join(parent_dir, argument_val))
-        else:
-            output_path = os.path.abspath(os.path.join(parent_dir, filename))
-        return output_path
+        if not os.path.isabs(filename):
+            ret_val = os.path.abspath(os.path.join(self.outputdir, filename))
+
+        return os.path.normpath(ret_val)

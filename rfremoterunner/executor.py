@@ -38,7 +38,7 @@ def run_executor():
     # Write the log html, report html, output xml
     if result.get('output_xml'):
         output_xml_path = arg_parser.get_output_xml_output_location()
-        write_file_to_disk(arg_parser.get_output_xml_output_location(), result['output_xml'].data.decode('utf-8'))
+        write_file_to_disk(output_xml_path, result['output_xml'].data.decode('utf-8'))
         logger.info('Local Output:  ' + output_xml_path)
 
     if result.get('log_html'):

@@ -70,7 +70,8 @@ class RemoteFrameworkClient:
 
     def _package_suite_hierarchy(self, suite):
         """
-        Parses through a Test Suite and its child Suites and packages them up into a dictionary to can be serialized
+        Parses through a Test Suite and its child Suites and packages them up into a dictionary so they can be
+        serialized
 
         :param suite: robot test suite
         :type suite: TestSuite

@@ -94,7 +94,6 @@ class RobotFrameworkServer:
                            name='Root',
                            **robot_args)
             logger.debug('Robot Run finished')
-            os.chdir(old_cwd)
 
             # Read the test artifacts from disk
             output_xml, log_html, report_html = RobotFrameworkServer._read_robot_artifacts_from_disk(workspace_dir)
@@ -169,7 +168,7 @@ class RobotFrameworkServer:
         log_html_path = os.path.join(workspace_dir, 'log.html')
         if os.path.exists(log_html_path):
             logger.debug('Reading log.html file off disk from: {}'.format(log_html_path))
-            log_html = read_file_from_disk(os.path.join(workspace_dir, 'log.html'))
+            log_html = read_file_from_disk(log_html_path)
 
         report_html = ''
         report_html_path = os.path.join(workspace_dir, 'report.html')
