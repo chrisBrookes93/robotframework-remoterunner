@@ -1,0 +1,27 @@
+stages:
+  - test
+
+test:
+  stage: test
+  image: python:2.7.17-slim-buster
+  script:
+    - DEBIAN_FRONTEND=noninteractive apt-get update -qy
+    # Install the dependencies for pyenv (defined here: https://github.com/pyenv/pyenv/wiki/Common-build-problems)
+    - apt-get install -qy make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
+    # Install pyenv
+    - curl https://pyenv.run | bash
+    - export PATH="~/.pyenv/bin:$PATH"
+    - eval "$(pyenv init -)"
+    - eval "$(pyenv virtualenv-init -)"
+    # Install the python versions
+    - pyenv install -v 3.7.2
+    - pyenv global 3.7.2
+    - pip install tox
+    # Run tox which runs the unit & integration tests
+    - tox
+  artifacts:
+      paths:
+        - py27_log.html
+        - py37_log.html
+      expire_in: 1 week
+      when: on_failure
