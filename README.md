@@ -154,9 +154,9 @@ Root                                                                  | PASS |
 1 critical test, 1 passed, 0 failed
 1 test total, 1 passed, 0 failed
 ==============================================================================
-Output:  c:\users\chris\appdata\local\temp\tmpy26cmp\output.xml
-Log:     c:\users\chris\appdata\local\temp\tmpy26cmp\log.html
-Report:  c:\users\chris\appdata\local\temp\tmpy26cmp\report.html
+Output:  c:\users\user1\appdata\local\temp\tmpy26cmp\output.xml
+Log:     c:\users\user1\appdata\local\temp\tmpy26cmp\log.html
+Report:  c:\users\user1\appdata\local\temp\tmpy26cmp\report.html
 
 Local Output:  C:\DEV\remote_output.xml
 Local Log:     C:\DEV\remote_log.html
