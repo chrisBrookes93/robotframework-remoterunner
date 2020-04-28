@@ -12,7 +12,7 @@ robot run, returning the test result artifacts back to the invoking host.
 ## Installation
 
 Python Dependencies:
-* robotframework
+* robotframework < 3.2
 * six
 
 To install the package run:
@@ -23,10 +23,10 @@ This package will need to be installed on the slave host, and the host you wish 
 
 ## Usage:
 This library contains two scripts:
-* *rfslave * - The agent that executes the robot run.
+* *rfslave* - The agent that executes the robot run.
 * *rfremoterun* - The script that invokes the slave to execute the robot run.
 
-### runslave
+### rfslave
 
 Once installed the slave can be launched by executing the ```rfremoterunner.runslave``` package:
 ```text
@@ -50,11 +50,11 @@ C:\rfslave -a 192.168.56.102 -p 1471
 Listening on 192.168.56.102:1471
 ```
 
-### executerun
-Once installed a remote robot run can be executed by running the ````rfremoterunner.executerun```` package:
+### rfremoterun
+Once installed a remote robot running the executable:
 ```text
 C:\DEV>rfremoterun -h
-usage: __main__.py [-h] [--debug] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG]
+usage: rfremoterun [-h] [--debug] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG]
                    [-r REPORT] [-F EXTENSION] [-s SUITE] [-t TEST]
                    [-i INCLUDE] [-e EXCLUDE] [-L LOGLEVEL]
                    host suites [suites ...]
