@@ -5,13 +5,13 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='robotframework-remoterunner',
-    version='1.1.1',
+    version='1.2.0',
     author='Chris Brookes',
     author_email='chris-brookes93@outlook.com',
     description='A library that provides the ability to execute RobotFramework test suites on a remote host.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.1.1.tar.gz",
+    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.2.0.tar.gz",
     url='https://github.com/chrisBrookes93/robotframework-remotrunner',
     keywords='robotframework automation testautomation rpa testing acceptancetesting atdd bdd',
     packages=setuptools.find_packages(include=['rfremoterunner']),
