@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='robotframework-remoterunner',
-    version='1.1.0',
+    version='1.1.1',
     author='Chris Brookes',
     author_email='chris-brookes93@outlook.com',
     description='A library that provides the ability to execute RobotFramework test suites on a remote host. This comes'
@@ -13,9 +13,10 @@ setuptools.setup(
                 'initiates the remote robot run. This is intended to used alongside or instead of other CI Agents.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.1.0.tar.gz",
+    download_url="https://github.com/chrisBrookes93/robotframework-remoterunner/archive/1.1.1.tar.gz",
     url='https://github.com/chrisBrookes93/robotframework-remotrunner',
-    packages=setuptools.find_packages(),
+    keywords='robotframework automation testautomation rpa testing acceptancetesting atdd bdd',
+    packages=setuptools.find_packages(include=['rfremoterunner']),
     classifiers=[
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -28,7 +29,14 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     install_requires=[
-        'robotframework',
+        # The test suite parsing was completely rewritten in 3.2 and not yet supported
+        'robotframework < 3.2',
         'six'
-    ]
+    ],
+    entry_points={
+        'console_scripts': [
+            'rfslave=rfremoterunner.slave:run_slave',
+            'rfremoterun=rfremoterunner.executor:run_executor'
+        ]
+    }
 )

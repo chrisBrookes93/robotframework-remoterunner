@@ -211,7 +211,7 @@ Start Slave
     [Arguments]    ${ip}=127.0.0.1    ${port}=1471
     [Documentation]    Starts the slave executable
     # Start the slave
-    ${command_line}=    Create List    python    -m    rfremoterunner.runslave    -a    ${ip}
+    ${command_line}=    Create List    rfslave    -a    ${ip}
     ...    -p    ${port}
     ${slave_handle}=    Start Process    @{command_line}    shell=${True}
     Sleep    2s
@@ -227,7 +227,7 @@ Run Executor
 Create Executor Command Line
     [Arguments]    ${ip}    ${suite_list}    ${arg_dict}    ${debug}=${False}
     [Documentation]    Creates a command line string for the executor
-    ${cmd_line}=    Create List    python    -m    rfremoterunner.executerun    ${ip}
+    ${cmd_line}=    Create List    rfremoterun    ${ip}
     : FOR    ${key}    IN    @{arg_dict.keys()}
     \    ${val}=    Get From Dictionary    ${arg_dict}    ${key}
     \    Append To List    ${cmd_line}    ${key}

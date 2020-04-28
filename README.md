@@ -23,15 +23,15 @@ This package will need to be installed on the slave host, and the host you wish 
 
 ## Usage:
 This library contains two scripts:
-* *runslave* - The agent that executes the robot run.
-* *executerun* - The script that invokes the slave to execute the robot run.
+* *rfslave * - The agent that executes the robot run.
+* *rfremoterun* - The script that invokes the slave to execute the robot run.
 
 ### runslave
 
 Once installed the slave can be launched by executing the ```rfremoterunner.runslave``` package:
 ```text
-C:\>python -m rfremoterunner.runslave -h
-usage: __main__.py [-h] [-a ADDRESS] [-p PORT] [-d]
+C:\>rfslave  -h
+usage: rfslave [-h] [-a ADDRESS] [-p PORT] [-d]
 
 Script to launch the robotframework slave. This opens an RPC port and waits
 for a request to execute a robot framework test execution
@@ -46,14 +46,14 @@ optional arguments:
 ```
 Example usage:
 ```text
-C:\python -m rfremoterunner.runslave -a 192.168.56.102 -p 1471
+C:\rfslave -a 192.168.56.102 -p 1471
 Listening on 192.168.56.102:1471
 ```
 
 ### executerun
 Once installed a remote robot run can be executed by running the ````rfremoterunner.executerun```` package:
 ```text
-C:\>python -m rfremoterunner.executerun -h
+C:\DEV>rfremoterun -h
 usage: __main__.py [-h] [--debug] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG]
                    [-r REPORT] [-F EXTENSION] [-s SUITE] [-t TEST]
                    [-i INCLUDE] [-e EXCLUDE] [-L LOGLEVEL]
@@ -135,8 +135,8 @@ The executor script currently supports a subset of the arguments that ```robot.r
 
 Example usage:
 ```text
-C:\python -m rfremoterunner.executerun 192.168.56.102 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ../
-Connecting to: http://192.168.1.12:1471
+C:\DEV> rfremoterun 192.168.56.102 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ./
+Connecting to: http://192.168.56.102:1471
 
 Robot execution response:
 ==============================================================================
