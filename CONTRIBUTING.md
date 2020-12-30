@@ -1,6 +1,6 @@
 # Contributing to Robot Framework Remote Runner
 
-Any contribution in welcomed.
+Any contribution is welcome.
 
 
 ## Dev environment
