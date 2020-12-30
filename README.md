@@ -15,9 +15,9 @@ Python Dependencies:
 * robotframework < 3.2
 * six
 
-To install the package run:
+To install the package and its runtime dependencies run:
 ```text
-pip install -r requirements.txt
+pip install .
 ```
 This package will need to be installed on the slave host, and the host you wish to execute the remote run from.
 

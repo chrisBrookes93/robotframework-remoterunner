@@ -21,7 +21,7 @@ test:
     - tox
   artifacts:
       paths:
-        - py27_log.html
-        - py37_log.html
+        - .tox/py27_log.html
+        - .tox/py37_log.html
       expire_in: 1 week
       when: on_failure
