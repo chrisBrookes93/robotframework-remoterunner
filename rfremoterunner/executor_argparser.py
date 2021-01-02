@@ -70,10 +70,6 @@ class ExecutorArgumentParser:
                             help='Where to save the HTML Report file on this machine once its been retrieved. Default: '
                                  'remote_report.html',
                             default='remote_report.html')
-        parser.add_argument('-F', '--extension',
-                            help='Parse only files with this extension when executing a directory. Has no effect when '
-                                 'running individual files or when using resource files. If more than one extension is '
-                                 'needed, separate them with a colon.\r Examples: `--extension robot`, `-F robot:txt`')
         parser.add_argument('-s', '--suite',
                             help='Select test suites to run by name. When this option is used with --test, --include or'
                                  ' --exclude, only test cases in matching suites and also matching other filtering '

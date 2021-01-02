@@ -6,6 +6,7 @@ jobs:
   test:
 
     runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     strategy:
       matrix:
         python-version: [2.7, 3.7, 3.9]
@@ -22,7 +23,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Run Tox
-      run: tox -e py
+      run: tox -e py-robotframework{282,31,32,latest}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:

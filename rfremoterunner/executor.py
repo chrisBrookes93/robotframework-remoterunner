@@ -21,7 +21,7 @@ def run_executor():
 
     # Initialise and execute the remote robot run
     rfs = RemoteFrameworkClient(arg_parser.host, arg_parser.debug)
-    result = rfs.execute_run(arg_parser.suites, arg_parser.extension, arg_parser.suite, arg_parser.robot_run_args)
+    result = rfs.execute_run(arg_parser.suites, arg_parser.suite, arg_parser.robot_run_args)
 
     # Print the robot stdout/stderr
     logger.info('\nRobot execution response:')

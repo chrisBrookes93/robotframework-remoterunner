@@ -1,17 +1,11 @@
 import os
 import logging
-from six import StringIO
 import six.moves.xmlrpc_client as xmlrpc_client
-from robot.writer import DataFileWriter
-from robot.running import TestSuiteBuilder
-from robot.parsing.model import ResourceFile, TestCaseFile
-from robot.libraries import STDLIBS
-from robot.utils.robotpath import find_file
-from rfremoterunner.utils import normalize_xmlrpc_address, read_file_from_disk, calculate_ts_parent_path
-
+from robot.api import TestSuiteBuilder
+from rfremoterunner.utils import normalize_xmlrpc_address, calculate_ts_parent_path
+from rfremoterunner.robot_file_parser import RobotFileProcessor
 
 logger = logging.getLogger(__file__)
-
 DEFAULT_PORT = 1471
 
 
@@ -34,15 +28,13 @@ class RemoteFrameworkClient:
         self._suites = {}
         logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
-    def execute_run(self, suite_list, extensions, include_suites, robot_arg_dict):
+    def execute_run(self, suite_list, include_suites, robot_arg_dict, ):
         """
         Sources a series of test suites and then makes the RPC call to the
         agent to execute the robot run.
 
         :param suite_list: List of paths to test suites or directories containing test suites
         :type suite_list: list
-        :param extensions: String that filters the accepted files extensions for test suites
-        :type extensions: str
         :param include_suites: List of strings that filter suites to include
         :type include_suites: list
         :param robot_arg_dict: Dictionary of arguments that will be passed to robot.run on the remote host
@@ -56,7 +48,8 @@ class RemoteFrameworkClient:
         logger.debug('Suite List: ' + str(suite_list))
 
         # Let robot do the heavy lifting in parsing the test suites
-        builder = TestSuiteBuilder(include_suites, extension=extensions)
+        builder = TestSuiteBuilder(include_suites)
+
         suite = builder.build(*suite_list)
 
         # Now iterate the suite's family tree, pull out the suites with test cases and resolve their dependencies.
@@ -105,66 +98,11 @@ class RemoteFrameworkClient:
         # Traverse the suite's ancestry to work out the directory path so that it can be recreated on the remote side
         path = calculate_ts_parent_path(suite)
 
-        # At this point `suite` is a robot.running.model.TestSuite which doesn't appear to support writing the source
-        # back to disk in robot syntax. To get around this, read it from disk again into a TestCaseFile which can be
-        # modified and then converted into bytes
-        tcf = TestCaseFile(source=suite.source).populate()
-
-        # Iterate through the imports of suite. _process_dependency() will update the path to the reference which we
-        # then copy to the TestCaseFile. From this we will produce the modified test suite file data
-        for suite_imp, tcf_imp in zip(suite.resource.imports, tcf.imports):
-            logger.debug('Processing dependency: `{}` for Test Suite: {}'.format(suite_imp.name, suite.name))
-            self._process_dependency(suite_imp)
-            tcf_imp.name = suite_imp.name
-
-        # Now that we've updated the references, get the file contents
-        string_io = StringIO()
-        DataFileWriter(output=string_io).write(tcf)
+        suite_proc = RobotFileProcessor(suite)
+        suite_proc.process_dependencies(self._dependencies)
+        updated_file = suite_proc.get_updated_file_data()
 
         return {
             'path': path,
-            'suite_data': string_io.getvalue()
+            'suite_data': updated_file
         }
-
-    def _process_dependency(self, dependency):
-        """
-        Processes a test suite dependency (could be a Resource or Library). This is read off the disk and added to the
-        dependencies dict. This will then get transferred over to the remote side with the test suite. A dependency's
-        location will be different on the remote host. This function also updates the reference to the dependency so
-        that it resolves correctly on the remote side
-
-        :param dependency: dependency to process
-        :type dependency: robot.model.imports.Import
-        """
-        # RobotFramework will be installed on the remote machine so we don't need to bundle these
-        if dependency.name not in STDLIBS:
-            # Locate the dependency file
-            dep_filepath = find_file(dependency.name, dependency.directory, dependency.type)
-            dep_filename = os.path.basename(dep_filepath)
-            logger.debug('Resolved dependency to: `{}`'.format(dependency.name))
-
-            # Change the path to the reference so that it will resolve on the remote side. The directory containing all
-            # of the dependencies will be added to the PYTHONPATH, so just the filename is sufficient
-            dependency.name = dep_filename
-
-            if dep_filename not in self._dependencies:
-                if dependency.type == 'Resource':
-                    # Import the Resource in order to parse its dependencies
-                    res = ResourceFile(dep_filepath).populate()
-
-                    # A Resource may have a dependency on other Resource and Library files, also collect these
-                    for imp in res.imports:
-                        logger.debug('Processing dependency: `{}` for: `{}`'.format(imp.name, dependency.name))
-                        self._process_dependency(imp)
-
-                    # Get the resource file data with the new reference paths
-                    string_io = StringIO()
-                    res.save(output=string_io)
-                    logger.debug('Patched Resource file: `{}`'.format(dependency.name))
-                    self._dependencies[dep_filename] = string_io.getvalue()
-                elif dependency.type == 'Library':
-                    # A Library is just a python file, so read this straight from disk
-                    logger.debug('Reading Python library from disk: `{}`'.format(dep_filepath))
-                    self._dependencies[dep_filename] = read_file_from_disk(dep_filepath)
-            else:
-                logger.debug('Dependency is already in the cache, skipping')

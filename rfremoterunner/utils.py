@@ -8,7 +8,7 @@ PORT_INC_REGEX = '.*:[0-9]{1,5}$'
 
 # The XML-RPC library may return a string as a str even though it was a unicode on the sending side.
 # We're using UTF-8 file encodings as standard so need to make sure that we're using unicode strings (only an issue in
-# Python 3)
+# Python 2)
 if six.PY3:
     unicode = str
 
