@@ -3,11 +3,12 @@
 [![Build Status](https://github.com/chrisBrookes93/robotframework-remoterunner/workflows/CI/badge.svg?branch=master)](https://github.com/chrisBrookes93/robotframework-remoterunner/actions)
 [![PyPI version](https://badge.fury.io/py/robotframework-remoterunner.svg)](https://badge.fury.io/py/robotframework-remoterunner)
 
-This library provides a robotframework slave, and accompanying robot executor script that allows you to run 
-Robot Framework Test Suites remotely. It's designed to be a lightweight agent and can be used as an alternative, 
-or with a CI Agent (e.g. Jenkins Slave). The executor script parses Test Suites and packages them up with their 
-dependencies before making an RPC call to the slave. The slave writes all Test Suites and resources to a temporary directory and then executes a 
-robot run, returning the test result artifacts back to the invoking host.
+This library provides a robotframework slave,
+and accompanying robot executor script that allows you to run Robot Framework Test Suites remotely.
+It's designed to be a lightweight agent and can be used as an alternative,
+or with a CI Agent (e.g. Jenkins Slave). The executor script parses Test Suites and packages them up with their dependencies before making an RPC call to the slave.
+The slave writes all Test Suites and resources to a temporary directory and then executes a robot run,
+returning the test result artifacts back to the invoking host.
 
 ## Installation
 
@@ -15,9 +16,9 @@ Python Dependencies:
 * robotframework < 3.2
 * six
 
-To install the package run:
+To install the package and its runtime dependencies run:
 ```text
-pip install -r requirements.txt
+pip install robotframework-remoterunner
 ```
 This package will need to be installed on the slave host, and the host you wish to execute the remote run from.
 
@@ -165,8 +166,8 @@ Local Report:  C:\DEV\remote_report.html
 
 ## Current Limitations:
 - HTTPS is not yet supported
-- Any Python Keyword libraries' dependencies are not packaged up and sent to the remote host. Any external Python 
-packages that the Keywords rely on will need to be installed on the remote host.
+- Any Python Keyword libraries' dependencies are not packaged up and sent to the remote host.
+  Any external Python packages that the Keywords rely on will need to be installed on the remote host.
 
 ## Future Features:
 - Extend Executor script to support all ```robot.run``` arguments.
