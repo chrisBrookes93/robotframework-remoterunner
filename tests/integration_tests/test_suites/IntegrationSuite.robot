@@ -27,6 +27,25 @@ Single Robot Test
     File Should Exist    ${test_workspace}/remote_log.html
     File Should Exist    ${test_workspace}/remote_report.html
 
+Deprecated Agent Script
+    [Documentation]    Test is the same as "Single Robot Test" but uses the deprecated agent entrypoint.
+    # Start the agent
+    Start Agent    deprecated_script=${True}
+    # Build arguments for the executor
+    ${suite_list}=    Create List    ${CURDIR}/../resources/simple_suite.robot
+    ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
+    ${ip}=    Set Variable    127.0.0.1
+    # Run the executor
+    ${executor_result}=    Run Executor    ${ip}    ${suite_list}    ${arg_dict}
+    Log    ${executor_result.stderr}    DEBUG
+    Log    ${executor_result.stdout}    DEBUG
+    # Check the return code
+    Should Be Equal As Integers    ${executor_result.rc}    0    executerun failed with: ${executor_result.stderr}
+    # Check the test artifacts were generated
+    File Should Exist    ${test_workspace}/remote_output.xml
+    File Should Exist    ${test_workspace}/remote_log.html
+    File Should Exist    ${test_workspace}/remote_report.html
+
 Different Port
     [Documentation]    Tests that a specific port can be specified to run on
     ${port}=    Set Variable    1472
@@ -208,10 +227,11 @@ Test Teardown
     Remove Directory    ${test_workspace}    recursive=${True}
 
 Start Agent
-    [Arguments]    ${ip}=127.0.0.1    ${port}=1471
+    [Arguments]    ${ip}=127.0.0.1    ${port}=1471    ${deprecated_script}=${False}
     [Documentation]    Starts the agent executable
     # Start the agent
-    ${command_line}=    Create List    rfagent    -a    ${ip}    -p    ${port}
+    ${script_name}=    Set Variable If    ${deprecated_script}    rfslave    rfagent
+    ${command_line}=    Create List    ${script_name}    -a    ${ip}    -p    ${port}
     ${agent_handle}=    Start Process    @{command_line}    shell=${True}
     Sleep    2s
     Process Should Be Running    ${agent_handle}    Failed to launch the agent

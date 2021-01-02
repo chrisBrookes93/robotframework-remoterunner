@@ -1,5 +1,19 @@
 import argparse
+import logging
+
 from rfremoterunner.rf_server import RobotFrameworkServer
+
+logger = logging.getLogger(__name__)
+
+
+def run_agent_deprecated():
+    """
+    Pass through for the deprecated command line script. Displays a deprecation warning and calls through to the new
+    entrypoint.
+    """
+    logger.warning('DeprecationWarning: "rfslave" command line has been deprecated and will be removed very soon inline'
+                   ' with the movement to drop such terms. Please use "rfagent" instead')
+    run_agent()
 
 
 def run_agent():
