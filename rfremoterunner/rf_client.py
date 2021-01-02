@@ -37,7 +37,7 @@ class RemoteFrameworkClient:
     def execute_run(self, suite_list, extensions, include_suites, robot_arg_dict):
         """
         Sources a series of test suites and then makes the RPC call to the
-        slave to execute the robot run.
+        agent to execute the robot run.
 
         :param suite_list: List of paths to test suites or directories containing test suites
         :type suite_list: list
