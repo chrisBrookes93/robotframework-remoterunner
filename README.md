@@ -3,12 +3,15 @@
 [![Build Status](https://github.com/chrisBrookes93/robotframework-remoterunner/workflows/CI/badge.svg?branch=master)](https://github.com/chrisBrookes93/robotframework-remoterunner/actions)
 [![PyPI version](https://badge.fury.io/py/robotframework-remoterunner.svg)](https://badge.fury.io/py/robotframework-remoterunner)
 
-This library provides a robotframework slave,
-and accompanying robot executor script that allows you to run Robot Framework Test Suites remotely.
+This library provides a robotframework agent,
+and accompanying robot executor script that allows you to execute Robot Framework Test Suites remotely.
 It's designed to be a lightweight agent and can be used as an alternative,
-or with a CI Agent (e.g. Jenkins Slave). The executor script parses Test Suites and packages them up with their dependencies before making an RPC call to the slave.
-The slave writes all Test Suites and resources to a temporary directory and then executes a robot run,
+or with a CI Agent (e.g. Jenkins Agent). The executor script parses Test Suites and packages them up with their dependencies before making an RPC call to the agent.
+The agent then writes all Test Suites and resources to a temporary directory and executes a robot run,
 returning the test result artifacts back to the invoking host.
+
+This library is distinctly different, and not to be confused with [PythonRemoteServer](https://github.com/robotframework/PythonRemoteServer) 
+which provides remote execution during a test run via the RemoteLib.
 
 ## Installation
 
@@ -20,21 +23,21 @@ To install the package and its runtime dependencies run:
 ```text
 pip install robotframework-remoterunner
 ```
-This package will need to be installed on the slave host, and the host you wish to execute the remote run from.
+This package will need to be installed on the agent host, and the host you wish to execute the remote run from.
 
 ## Usage:
 This library contains two scripts:
-* *rfslave* - The agent that executes the robot run.
-* *rfremoterun* - The script that invokes the slave to execute the robot run.
+* *rfagent* - The agent that receives and executes the robot run.
+* *rfremoterun* - The script that invokes the agent to execute the robot run.
 
-### rfslave
+### rfagent
 
-Once installed the slave can be launched by executing the ```rfremoterunner.runslave``` package:
+Once installed, the agent can be launched by running the ```rfagent``` script:
 ```text
-C:\>rfslave  -h
-usage: rfslave [-h] [-a ADDRESS] [-p PORT] [-d]
+C:\>rfagent  -h
+usage: rfagent [-h] [-a ADDRESS] [-p PORT] [-d]
 
-Script to launch the robotframework slave. This opens an RPC port and waits
+Script to launch the robotframework agent. This opens an RPC port and waits
 for a request to execute a robot framework test execution
 
 optional arguments:
@@ -47,12 +50,12 @@ optional arguments:
 ```
 Example usage:
 ```text
-C:\rfslave -a 192.168.56.102 -p 1471
+C:\rfagent -a 192.168.56.102 -p 1471
 Listening on 192.168.56.102:1471
 ```
 
 ### rfremoterun
-Once installed a remote robot running the executable:
+Once installed, the a Test Suite can be executed remotely by running the ```rfremoterun``` script:
 ```text
 C:\DEV>rfremoterun -h
 usage: rfremoterun [-h] [--debug] [-d OUTPUTDIR] [-o OUTPUT] [-l LOG]
@@ -136,7 +139,7 @@ The executor script currently supports a subset of the arguments that ```robot.r
 
 Example usage:
 ```text
-C:\DEV> rfremoterun 192.168.56.102 C:\DEV\robotframework-slave\tests\robot\ --loglevel DEBUG --outputdir ./
+C:\DEV> rfremoterun 192.168.56.102 C:\DEV\robotframework-remoterunner\tests\robot\ --loglevel DEBUG --outputdir ./
 Connecting to: http://192.168.56.102:1471
 
 Robot execution response:
@@ -172,5 +175,5 @@ Local Report:  C:\DEV\remote_report.html
 ## Future Features:
 - Extend Executor script to support all ```robot.run``` arguments.
 - Add support for Robot Variable files.
-- Implement an asynchronous mode with the ability to poll the slave for a status on a particular robot execution.
+- Implement an asynchronous mode with the ability to poll the agent for a status on a particular robot execution.
 - Add support to run on multiple hosts (concurrently).

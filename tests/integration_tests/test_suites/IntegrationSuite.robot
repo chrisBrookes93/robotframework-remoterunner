@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation     Basic suite of tests for the execution of the slave and executor on the local machine.
+Documentation     Basic suite of tests for the execution of the agent and executor on the local machine.
 Test Setup        Test Setup
 Test Teardown     Test Teardown
 Library           Process
@@ -10,8 +10,27 @@ Library           ../IntegrationTestLibs.py
 *** Test Cases ***
 Single Robot Test
     [Documentation]    Tests the remote execution of a basic named robot test
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
+    # Build arguments for the executor
+    ${suite_list}=    Create List    ${CURDIR}/../resources/simple_suite.robot
+    ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
+    ${ip}=    Set Variable    127.0.0.1
+    # Run the executor
+    ${executor_result}=    Run Executor    ${ip}    ${suite_list}    ${arg_dict}
+    Log    ${executor_result.stderr}    DEBUG
+    Log    ${executor_result.stdout}    DEBUG
+    # Check the return code
+    Should Be Equal As Integers    ${executor_result.rc}    0    executerun failed with: ${executor_result.stderr}
+    # Check the test artifacts were generated
+    File Should Exist    ${test_workspace}/remote_output.xml
+    File Should Exist    ${test_workspace}/remote_log.html
+    File Should Exist    ${test_workspace}/remote_report.html
+
+Deprecated Agent Script
+    [Documentation]    Test is the same as "Single Robot Test" but uses the deprecated agent entrypoint.
+    # Start the agent
+    Start Agent    deprecated_script=${True}
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/simple_suite.robot
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
@@ -30,8 +49,8 @@ Single Robot Test
 Different Port
     [Documentation]    Tests that a specific port can be specified to run on
     ${port}=    Set Variable    1472
-    # Start the slave on a specific port
-    Start Slave    127.0.0.1    ${port}
+    # Start the agent on a specific port
+    Start Agent    127.0.0.1    ${port}
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/simple_suite.robot
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
@@ -49,8 +68,8 @@ Different Port
 
 Complex Case
     [Documentation]    Tests an in-depth example of a hierarchy of test suites. The robot suite hierarchy used in the unit tests for rf_client.py is re-used here
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../../unit_tests/rf_client_test_resources
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
@@ -75,8 +94,8 @@ Complex Case
 
 Specific Extension
     [Documentation]    Test that the --extension parameter is passed to robot and behaves correctly. Note that file extensions other than .robot are deprecated. This test will cause robot to throw warnings
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/varying_file_extensions
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}    --extension=txt
@@ -97,8 +116,8 @@ Specific Extension
 
 Suite Name Filtering
     [Documentation]    Tests the --suite variable correctly filters suites based on name
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/suite_name_filtering
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}    --suite=bbb*
@@ -119,8 +138,8 @@ Suite Name Filtering
 
 Specific Output Paths
     [Documentation]    Test that test artifacts are written to specific output paths when specified
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/simple_suite.robot
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}    --log=custom_log.html    --report=custom_report.html    --output=custom_xml.xml
@@ -138,8 +157,8 @@ Specific Output Paths
 
 Include Exclude Test Cases
     [Documentation]    Tests that the --include and --exclude arguments correctly filter test cases
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/include_exclude_test_cases.robot
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}    --include=AAA    --exclude=CCC
@@ -160,8 +179,8 @@ Include Exclude Test Cases
 
 Executor Correct Return Code
     [Documentation]    Tests that the executor returns the return code of the remote robot execution
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/suite_4_failing_tests.robot
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
@@ -179,8 +198,8 @@ Executor Correct Return Code
 
 Test uses Robot STDLIBs
     [Documentation]    Tests the correct remote execution of test suites that make use of Robot Standard Libraries
-    # Start the slave
-    Start Slave
+    # Start the agent
+    Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../resources/suite_with_stdlibs.robot
     ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
@@ -207,15 +226,15 @@ Test Teardown
     Terminate All Processes
     Remove Directory    ${test_workspace}    recursive=${True}
 
-Start Slave
-    [Arguments]    ${ip}=127.0.0.1    ${port}=1471
-    [Documentation]    Starts the slave executable
-    # Start the slave
-    ${command_line}=    Create List    rfslave    -a    ${ip}
-    ...    -p    ${port}
-    ${slave_handle}=    Start Process    @{command_line}    shell=${True}
+Start Agent
+    [Arguments]    ${ip}=127.0.0.1    ${port}=1471    ${deprecated_script}=${False}
+    [Documentation]    Starts the agent executable
+    # Start the agent
+    ${script_name}=    Set Variable If    ${deprecated_script}    rfslave    rfagent
+    ${command_line}=    Create List    ${script_name}    -a    ${ip}    -p    ${port}
+    ${agent_handle}=    Start Process    @{command_line}    shell=${True}
     Sleep    2s
-    Process Should Be Running    ${slave_handle}    Failed to launch the slave
+    Process Should Be Running    ${agent_handle}    Failed to launch the agent
 
 Run Executor
     [Arguments]    ${ip}    ${suite_list}    ${arg_dict}    ${debug}=${False}    ${stdout_file}=${None}    ${stderr_file}=${None}
