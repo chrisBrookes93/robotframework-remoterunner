@@ -1,7 +1,6 @@
 *.pyc
 *.egg-info/
 .tox/
-.coverage/
 .idea/
 venv/
 htmlcov/
