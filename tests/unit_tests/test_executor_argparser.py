@@ -58,7 +58,7 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(eap.suite, expected_suite)
         self.assertEqual(eap.loglevel, expected_log_level)
         self.assertListEqual(
-            sorted(['loglevel', 'include', 'test', 'exclude', 'suite']),
+            sorted(['loglevel', 'include', 'test', 'exclude', 'suite', 'extension']),
             sorted(eap.robot_run_args.keys()))
 
     def test_get_log_html_output_location_default(self):
