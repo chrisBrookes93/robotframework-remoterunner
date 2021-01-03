@@ -1,6 +1,0 @@
-[run]
-include =
-    */rfremoterunner/*
-
-[report]
-exclude_lines = unicode = str

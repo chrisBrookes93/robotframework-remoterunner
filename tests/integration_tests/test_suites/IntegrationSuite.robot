@@ -72,7 +72,7 @@ Complex Case
     Start Agent
     # Build arguments for the executor
     ${suite_list}=    Create List    ${CURDIR}/../../unit_tests/rf_client_test_resources
-    ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}
+    ${arg_dict}=    Create Dictionary    --loglevel=TRACE    --outputdir=${test_workspace}    --extension=txt:robot
     ${ip}=    Set Variable    127.0.0.1
     # Run the executor
     ${executor_result}=    Run Executor    ${ip}    ${suite_list}    ${arg_dict}    ${True}    ${test_workspace}/stdout.log    ${test_workspace}/stderr.log
@@ -247,7 +247,7 @@ Create Executor Command Line
     [Arguments]    ${ip}    ${suite_list}    ${arg_dict}    ${debug}=${False}
     [Documentation]    Creates a command line string for the executor
     ${cmd_line}=    Create List    rfremoterun    ${ip}
-    : FOR    ${key}    IN    @{arg_dict.keys()}
+    FOR    ${key}    IN    @{arg_dict.keys()}
     \    ${val}=    Get From Dictionary    ${arg_dict}    ${key}
     \    Append To List    ${cmd_line}    ${key}
     \    Append To List    ${cmd_line}    ${val}

@@ -1,7 +1,7 @@
 import argparse
 import os
 
-ROBOT_RUN_ARGS = ['loglevel', 'include', 'test', 'exclude', 'suite']
+ROBOT_RUN_ARGS = ['loglevel', 'include', 'test', 'exclude', 'suite', 'extension']
 
 
 class ExecutorArgumentParser:
@@ -9,7 +9,6 @@ class ExecutorArgumentParser:
     def __init__(self, args):
         """
         Constructor for ExecutorArgumentParser
-        
         :param args: Arguments to process (probably stdin)
         :type args: list
         """

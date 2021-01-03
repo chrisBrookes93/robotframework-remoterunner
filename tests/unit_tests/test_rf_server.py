@@ -1,8 +1,9 @@
-import unittest
+from io import open
 import os
 import shutil
-from io import open
+import unittest
 from mock import patch
+
 from rfremoterunner.rf_server import RobotFrameworkServer
 
 
@@ -17,23 +18,28 @@ class TestRemoteFrameworkServer(unittest.TestCase):
         if self.to_delete:
             shutil.rmtree(self.to_delete)
 
-    def file_contents_is_equal(self, file_path, expected_file_data):
+    @staticmethod
+    def file_contents_is_equal(file_path, expected_file_data):
         """
         Helper function to verify the contents of a file
 
         :param file_path: Path to the file to verify
-        :type file_path: str
+        :type file_path: str | unicode
         :param expected_file_data: Expected file data
-        :type expected_file_data: str
+        :type expected_file_data: str | unicode
         """
         if not os.path.exists(file_path):
             raise Exception('File does not exist:' + file_path)
 
-        with open(file_path, 'r', encoding='utf-8') as fp:
-            file_data = fp.read()
-        self.assertEqual(expected_file_data, file_data)
+        with open(file_path, 'r', encoding='utf-8') as file_handle:
+            file_data = file_handle.read()
+        if expected_file_data != file_data:
+            raise Exception('{} \n\n!=    \n\n{}'.format(expected_file_data, file_data))
 
     def test_create_workspace(self):
+        """
+        Test that _create_workspace() creates the correct directory structure
+        """
         ts_1 = {'path': 'A/B/C/D/E', 'suite_data': 'ts_1' * 10}
         ts_2 = {'path': 'A/B/C/D/E', 'suite_data': 'ts_2' * 10}
         ts_3 = {'path': 'TS3.robot', 'suite_data': 'ts_3' * 10}
@@ -64,6 +70,9 @@ class TestRemoteFrameworkServer(unittest.TestCase):
         self.file_contents_is_equal(os.path.join(workspace_dir, 'dep3.py'), dependencies['dep3.py'])
 
     def test_execute_robot_run_correct_case(self):
+        """
+        Test the correct case for execute_robot_run(), namely the artifacts are processed correctly.
+        """
         expected_dict_keys = ['std_out_err', 'output_xml', 'log_html', 'report_html', 'ret_code']
         expected_output_bytes = 'output.xml bytes'
         expected_log_bytes = 'log.html bytes'
@@ -71,10 +80,10 @@ class TestRemoteFrameworkServer(unittest.TestCase):
         robot_artifacts = (expected_output_bytes, expected_log_bytes, expected_report_bytes)
         expected_rc = 123
         with patch('rfremoterunner.rf_server.RobotFrameworkServer._create_workspace', return_value='directory'), \
-             patch('rfremoterunner.rf_server.run', return_value=expected_rc), \
-             patch('rfremoterunner.rf_server.RobotFrameworkServer._read_robot_artifacts_from_disk',
-                   return_value=robot_artifacts), \
-             patch('rfremoterunner.rf_server.shutil.rmtree') as patched_rmtree, \
+                patch('rfremoterunner.rf_server.run', return_value=expected_rc), \
+                patch('rfremoterunner.rf_server.RobotFrameworkServer._read_robot_artifacts_from_disk',
+                      return_value=robot_artifacts), \
+                patch('rfremoterunner.rf_server.shutil.rmtree') as patched_rmtree, \
                 patch('os.chdir'):
             actual_val = self.test_obj.execute_robot_run({'Suite1.robot': 'blah'}, {}, {'loglevel': 'TRACE'})
             self.assertListEqual(sorted(expected_dict_keys), sorted(list(actual_val.keys())))
@@ -86,15 +95,23 @@ class TestRemoteFrameworkServer(unittest.TestCase):
             patched_rmtree.assert_called_once_with('directory')
 
     def test_read_robot_artifacts_from_disk_files_exist(self):
+        """
+        Test that _read_robot_artifacts_from_disk() calls through to read_file_from_disk() in order to read the test
+        artifacts off disk
+        """
         expected_file_contents = ['Log HTML Data', 'Report HTML Data', 'Output XML Data']
         with patch('os.path.exists', return_value=True), \
-             patch('rfremoterunner.rf_server.read_file_from_disk', side_effect=expected_file_contents):
+                patch('rfremoterunner.rf_server.read_file_from_disk', side_effect=expected_file_contents):
             output_xml, log_html, report_html = self.test_obj._read_robot_artifacts_from_disk('workspace')
             self.assertEqual(expected_file_contents[0], log_html)
             self.assertEqual(expected_file_contents[1], report_html)
             self.assertEqual(expected_file_contents[2], output_xml)
 
     def test_read_robot_artifacts_from_disk_files_do_not_exist(self):
+        """
+        Test that _read_robot_artifacts_from_disk() gracefully handles the files not existing (e.g. if the test run
+        failed to actually run)
+        """
         output_xml, log_html, report_html = self.test_obj._read_robot_artifacts_from_disk('%TEMP%/NOT_EXIST/')
         self.assertEqual('', output_xml)
         self.assertEqual('', log_html)

@@ -1,6 +1,7 @@
 import unittest
 import os
 import tempfile
+
 from rfremoterunner.executor_argparser import ExecutorArgumentParser
 
 
@@ -16,6 +17,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         os.chdir(self.temp_cwd)
 
     def test_args_set_correctly(self):
+        """
+        Test that all arguments are set correctly in the ExecutorArgumentParser
+        """
         expected_host = '192.168.56.1'
         expected_suites = self.suite_dir
         expected_output_dir = '../../'
@@ -58,10 +62,13 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(eap.suite, expected_suite)
         self.assertEqual(eap.loglevel, expected_log_level)
         self.assertListEqual(
-            sorted(['loglevel', 'include', 'test', 'exclude', 'suite']),
+            sorted(['loglevel', 'include', 'test', 'exclude', 'suite', 'extension']),
             sorted(eap.robot_run_args.keys()))
 
     def test_get_log_html_output_location_default(self):
+        """
+        Test that get_log_html_output_location() returns the default location if one has not been specified
+        """
         input_args = ['127.0.0.1', self.suite_dir]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_log_html_output_location()
@@ -69,6 +76,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(expected_val, actual_val)
 
     def test_get_log_html_output_location_outputdir_specified(self):
+        """
+        Test that get_log_html_output_location() returns the correct path when one is specified in the config
+        """
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -79,6 +89,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_log_html_output_location_log_specified_relative(self):
+        """
+        Test that get_log_html_output_location() returns the correct path when a relative one is specified in the config
+        """
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -90,6 +103,10 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_log_html_output_location_log_specified_absolute(self):
+        """
+        Test that get_log_html_output_location() returns the correct path when an absolute one is specified in the
+        config
+        """
         temp_dir = tempfile.gettempdir()
         expected_val = os.path.abspath(os.path.join(temp_dir, 'test_results', 'log.html'))
         input_args = ['127.0.0.1',
@@ -102,6 +119,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(expected_val, actual_val)
 
     def test_get_report_html_output_location_default(self):
+        """
+        Test that get_report_html_output_location() returns the default location if one has not been specified
+        """
         input_args = ['127.0.0.1', self.suite_dir]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_report_html_output_location()
@@ -109,6 +129,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(expected_val, actual_val)
 
     def test_get_report_html_output_location_outputdir_specified(self):
+        """
+        Test that get_report_html_output_location() returns the correct path when one is specified in the config
+        """
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -119,6 +142,10 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_report_html_output_location_log_specified_relative(self):
+        """
+        Test that get_report_html_output_location() returns the correct path when a relative one is specified in the
+        config
+        """
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -130,6 +157,10 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_report_html_output_location_log_specified_absolute(self):
+        """
+        Test that get_report_html_output_location() returns the correct path when an absolute one is specified in the
+        config
+        """
         temp_dir = tempfile.gettempdir()
         expected_val = os.path.abspath(os.path.join(temp_dir, 'test_results', 'report.html'))
         input_args = ['127.0.0.1',
@@ -142,6 +173,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(expected_val, actual_val)
 
     def test_get_output_xml_output_location_default(self):
+        """
+        Test that get_output_xml_output_location() returns the default location if one has not been specified
+        """
         input_args = ['127.0.0.1', self.suite_dir]
         eap = ExecutorArgumentParser(input_args)
         actual_val = eap.get_output_xml_output_location()
@@ -149,6 +183,9 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(expected_val, actual_val)
 
     def test_get_output_xml_output_location_outputdir_specified(self):
+        """
+        Test that get_output_xml_output_location() returns the correct path when one is specified in the config
+        """
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -159,6 +196,10 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_output_xml_output_location_log_specified_relative(self):
+        """
+        Test that get_output_xml_output_location() returns the correct path when a relative one is specified in the
+        config
+        """
         input_args = ['127.0.0.1',
                       self.suite_dir,
                       '--loglevel', 'DEBUG',
@@ -170,6 +211,10 @@ class TestExecutorArgumentParser(unittest.TestCase):
         self.assertEqual(os.path.abspath(expected_val), os.path.abspath(actual_val))
 
     def test_get_output_xml_output_location_log_specified_absolute(self):
+        """
+        Test that get_output_xml_output_location() returns the correct path when an absolute one is specified in the
+        config
+        """
         temp_dir = tempfile.gettempdir()
         expected_val = os.path.abspath(os.path.join(temp_dir, 'test_results', 'output.xml'))
         input_args = ['127.0.0.1',

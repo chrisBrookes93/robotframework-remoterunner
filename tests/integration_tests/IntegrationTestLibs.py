@@ -5,8 +5,8 @@ def get_test_suite_names(output_xml_path):
     """"
     Parses an output.xml file and returns the names of test suites that contain tests that were executed
     """
-    er = ExecutionResult(output_xml_path)
-    return _recursively_list_test_suites(er.suite)
+    ex_res = ExecutionResult(output_xml_path)
+    return _recursively_list_test_suites(ex_res.suite)
 
 
 def _recursively_list_test_suites(suite):
@@ -26,8 +26,8 @@ def get_test_executed_names(output_xml_path):
     """"
     Parses an output.xml file and returns the names of test cases that were executed
     """
-    er = ExecutionResult(output_xml_path)
-    return _recursively_list_test_cases(er.suite)
+    ex_res = ExecutionResult(output_xml_path)
+    return _recursively_list_test_cases(ex_res.suite)
 
 
 def _recursively_list_test_cases(suite):

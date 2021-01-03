@@ -16,7 +16,7 @@ which provides remote execution during a test run via the RemoteLib.
 ## Installation
 
 Python Dependencies:
-* robotframework < 3.2
+* robotframework >= 3.1.1
 * six
 
 To install the package and its runtime dependencies run:
@@ -167,12 +167,17 @@ Local Log:     C:\DEV\remote_log.html
 Local Report:  C:\DEV\remote_report.html
 ```
 
-## Current Limitations:
+## Issues/Limitations:
 - HTTPS is not yet supported
 - Any Python Keyword libraries' dependencies are not packaged up and sent to the remote host.
   Any external Python packages that the Keywords rely on will need to be installed on the remote host.
+- It is strongly recommended to run the agent and the executor against the same version of robotframework.
+There are subtle differences in the way robotframework parses arguments and you may experience unexpected behaviour.
+- Although there is backward support for earlier versions of robotframework, this package assumes modern versions. 
+You should take care that your underlying robotframework version supports the arguments that you require.
 
 ## Future Features:
+- Add support for HTTPS
 - Extend Executor script to support all ```robot.run``` arguments.
 - Add support for Robot Variable files.
 - Implement an asynchronous mode with the ability to poll the agent for a status on a particular robot execution.

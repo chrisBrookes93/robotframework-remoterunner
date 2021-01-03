@@ -1,19 +1,19 @@
 from io import open
+import os
 import re
 import six
-import os
 
 
 PORT_INC_REGEX = '.*:[0-9]{1,5}$'
 
 # The XML-RPC library may return a string as a str even though it was a unicode on the sending side.
 # We're using UTF-8 file encodings as standard so need to make sure that we're using unicode strings (only an issue in
-# Python 3)
+# Python 2)
 if six.PY3:
-    unicode = str
+    unicode = str  # pylint: disable=invalid-name
 
 
-def read_file_from_disk(path, encoding='utf-8'):
+def read_file_from_disk(path, encoding='utf-8', into_lines=False):
     """
     Utility function to read and return a file from disk
 
@@ -21,12 +21,14 @@ def read_file_from_disk(path, encoding='utf-8'):
     :type path: str
     :param encoding: Encoding of the file
     :type encoding: str
+    :param into_lines: Whether or not to return a list of lines
+    :type into_lines: bool
 
     :return: Contents of the file
     :rtype: str
     """
-    with open(path, 'r', encoding=encoding) as fp:
-        return fp.read()
+    with open(path, 'r', encoding=encoding) as file_handle:
+        return file_handle.readlines() if into_lines else file_handle.read()
 
 
 def write_file_to_disk(path, file_contents, encoding='utf-8'):
@@ -40,8 +42,8 @@ def write_file_to_disk(path, file_contents, encoding='utf-8'):
     :param encoding: Encoding of the file
     :type encoding: str
     """
-    with open(path, 'w', encoding=encoding) as fp:
-        fp.write(unicode(file_contents))
+    with open(path, 'w', encoding=encoding) as file_handle:
+        file_handle.write(unicode(file_contents))
 
 
 def normalize_xmlrpc_address(address, default_port):
@@ -83,4 +85,5 @@ def calculate_ts_parent_path(suite):
         family_tree.append(current_suite.name)
         current_suite = current_suite.parent
 
-    return os.path.join(*reversed(family_tree))
+    # Stick with unix style slashes for consistency
+    return os.path.join(*reversed(family_tree)).replace('\\', '/')

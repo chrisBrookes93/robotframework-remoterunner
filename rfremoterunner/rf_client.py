@@ -1,18 +1,17 @@
 import os
 import logging
-from six import StringIO
+import re
 import six.moves.xmlrpc_client as xmlrpc_client
-from robot.writer import DataFileWriter
-from robot.running import TestSuiteBuilder
-from robot.parsing.model import ResourceFile, TestCaseFile
+import six
+from robot.api import TestSuiteBuilder
 from robot.libraries import STDLIBS
 from robot.utils.robotpath import find_file
-from rfremoterunner.utils import normalize_xmlrpc_address, read_file_from_disk, calculate_ts_parent_path
 
+from rfremoterunner.utils import normalize_xmlrpc_address, calculate_ts_parent_path, read_file_from_disk
 
 logger = logging.getLogger(__file__)
-
 DEFAULT_PORT = 1471
+IMPORT_LINE_REGEX = re.compile('(Resource|Library)([\\s]+)([^[\\n\\r]*)([\\s]+)')
 
 
 class RemoteFrameworkClient:
@@ -41,7 +40,7 @@ class RemoteFrameworkClient:
 
         :param suite_list: List of paths to test suites or directories containing test suites
         :type suite_list: list
-        :param extensions: String that filters the accepted files extensions for test suites
+        :param extensions: String that filters the accepted file extensions for the test suites
         :type extensions: str
         :param include_suites: List of strings that filter suites to include
         :type include_suites: list
@@ -53,10 +52,10 @@ class RemoteFrameworkClient:
         """
         # Use robot to resolve all of the test suites
         suite_list = [os.path.normpath(p) for p in suite_list]
-        logger.debug('Suite List: ' + str(suite_list))
+        logger.debug('Suite List: %s', str(suite_list))
 
         # Let robot do the heavy lifting in parsing the test suites
-        builder = TestSuiteBuilder(include_suites, extension=extensions)
+        builder = self._create_test_suite_builder(include_suites, extensions)
         suite = builder.build(*suite_list)
 
         # Now iterate the suite's family tree, pull out the suites with test cases and resolve their dependencies.
@@ -64,10 +63,36 @@ class RemoteFrameworkClient:
         self._package_suite_hierarchy(suite)
 
         # Make the RPC
-        logger.info('Connecting to: ' + self._address)
+        logger.info('Connecting to: %s', self._address)
         response = self._client.execute_robot_run(self._suites, self._dependencies, robot_arg_dict, self._debug)
 
         return response
+
+    @staticmethod
+    def _create_test_suite_builder(include_suites, extensions):
+        """
+        Construct a robot.api.TestSuiteBuilder instance. There are argument name/type changes made at
+        robotframework==3.2. This function attempts to initialize a TestSuiteBuilder instance assuming
+        robotframework>=3.2, and falls back the the legacy arguments on exception.
+
+        :param include_suites: Suites to include
+        :type include_suites: list
+        :param extensions: string of extensions using a ':' as a join character
+
+        :return: TestSuiteBuilder instance
+        :rtype: robot.api.TestSuiteBuilder
+        """
+        if extensions:
+            split_ext = list(ext.lower().lstrip('.') for ext in extensions.split(':'))
+        else:
+            split_ext = ['robot']
+        try:
+            builder = TestSuiteBuilder(include_suites, included_extensions=split_ext)
+        except TypeError:
+            # Pre robotframework 3.2 API
+            builder = TestSuiteBuilder(include_suites, extension=extensions)  # pylint: disable=unexpected-keyword-arg
+
+        return builder
 
     def _package_suite_hierarchy(self, suite):
         """
@@ -101,70 +126,78 @@ class RemoteFrameworkClient:
         :return: Dictionary containing the suite file data and path from the root directory
         :rtype: dict
         """
-        logger.debug('Processing Test Suite: `{}`'.format(suite.name))
+        logger.debug('Processing Test Suite: %s', suite.name)
         # Traverse the suite's ancestry to work out the directory path so that it can be recreated on the remote side
         path = calculate_ts_parent_path(suite)
 
-        # At this point `suite` is a robot.running.model.TestSuite which doesn't appear to support writing the source
-        # back to disk in robot syntax. To get around this, read it from disk again into a TestCaseFile which can be
-        # modified and then converted into bytes
-        tcf = TestCaseFile(source=suite.source).populate()
-
-        # Iterate through the imports of suite. _process_dependency() will update the path to the reference which we
-        # then copy to the TestCaseFile. From this we will produce the modified test suite file data
-        for suite_imp, tcf_imp in zip(suite.resource.imports, tcf.imports):
-            logger.debug('Processing dependency: `{}` for Test Suite: {}'.format(suite_imp.name, suite.name))
-            self._process_dependency(suite_imp)
-            tcf_imp.name = suite_imp.name
-
-        # Now that we've updated the references, get the file contents
-        string_io = StringIO()
-        DataFileWriter(output=string_io).write(tcf)
+        # Recursively parse and process all dependencies and return the patched test suite file
+        updated_file = self._process_robot_file(suite)
 
         return {
             'path': path,
-            'suite_data': string_io.getvalue()
+            'suite_data': updated_file
         }
 
-    def _process_dependency(self, dependency):
+    def _process_robot_file(self, source):
         """
-        Processes a test suite dependency (could be a Resource or Library). This is read off the disk and added to the
-        dependencies dict. This will then get transferred over to the remote side with the test suite. A dependency's
-        location will be different on the remote host. This function also updates the reference to the dependency so
-        that it resolves correctly on the remote side
+        Processes a robot file (could be a Test Suite or a Resource) and performs the following:
+            - Parses the files's robot dependencies (e.g. Library & Resource references) and adds them into the
+            `dependencies` dict
+            - Corrects the path references in the suite file to where the dependencies will be placed on the remote side
+            - Returns the updated robot file data
 
-        :param dependency: dependency to process
-        :type dependency: robot.model.imports.Import
+        :param source: a Robot file or a path to a robot file
+        :type source: robot.running.model.TestSuite | str
+
+        :return: Dictionary containing the suite file data and path from the root directory
+        :rtype: dict
         """
-        # RobotFramework will be installed on the remote machine so we don't need to bundle these
-        if dependency.name not in STDLIBS:
-            # Locate the dependency file
-            dep_filepath = find_file(dependency.name, dependency.directory, dependency.type)
-            dep_filename = os.path.basename(dep_filepath)
-            logger.debug('Resolved dependency to: `{}`'.format(dependency.name))
+        if isinstance(source, six.string_types):
+            file_path = source
+            is_test_suite = False
+        else:
+            file_path = source.source
+            is_test_suite = True
 
-            # Change the path to the reference so that it will resolve on the remote side. The directory containing all
-            # of the dependencies will be added to the PYTHONPATH, so just the filename is sufficient
-            dependency.name = dep_filename
+        modified_file_lines = []
+        # Read the actual file from disk
+        file_lines = read_file_from_disk(file_path, into_lines=True)
 
-            if dep_filename not in self._dependencies:
-                if dependency.type == 'Resource':
-                    # Import the Resource in order to parse its dependencies
-                    res = ResourceFile(dep_filepath).populate()
+        for line in file_lines:
+            # Check if the current line is a Library or Resource import
+            matches = IMPORT_LINE_REGEX.search(line)
+            if matches and len(matches.groups()) == 4:
+                imp_type = matches.group(1)
+                whitespace_sep = matches.group(2)
+                res_path = matches.group(3)
+                # Replace the path with just the filename. They will be in the PYTHONPATH on the remote side so only
+                # the filename is required.
+                filename = os.path.basename(res_path)
+                line_ending = matches.group(4)
 
-                    # A Resource may have a dependency on other Resource and Library files, also collect these
-                    for imp in res.imports:
-                        logger.debug('Processing dependency: `{}` for: `{}`'.format(imp.name, dependency.name))
-                        self._process_dependency(imp)
+                # Rebuild the updated line and append
+                modified_file_lines.append(imp_type + whitespace_sep + filename + line_ending)
 
-                    # Get the resource file data with the new reference paths
-                    string_io = StringIO()
-                    res.save(output=string_io)
-                    logger.debug('Patched Resource file: `{}`'.format(dependency.name))
-                    self._dependencies[dep_filename] = string_io.getvalue()
-                elif dependency.type == 'Library':
-                    # A Library is just a python file, so read this straight from disk
-                    logger.debug('Reading Python library from disk: `{}`'.format(dep_filepath))
-                    self._dependencies[dep_filename] = read_file_from_disk(dep_filepath)
+                # If this not a dependency we've already dealt with and not a built-in robot library
+                # (e.g. robot.libraries.Process)
+                if filename not in self._dependencies and \
+                        not res_path.strip().startswith('robot.libraries') \
+                        and res_path.strip() not in STDLIBS:
+                    # Find the actual file path
+                    full_path = find_file(res_path, os.path.dirname(file_path), imp_type)
+
+                    if imp_type == 'Library':
+                        # If its a Library (python file) then read the data and add to the dependencies
+                        self._dependencies[filename] = read_file_from_disk(full_path)
+                    else:
+                        # If its a Resource, recurse down and parse it
+                        self._process_robot_file(full_path)
             else:
-                logger.debug('Dependency is already in the cache, skipping')
+                modified_file_lines.append(line)
+
+        new_file_data = ''.join(modified_file_lines)
+
+        if not is_test_suite:
+            self._dependencies[os.path.basename(file_path)] = new_file_data
+
+        return new_file_data

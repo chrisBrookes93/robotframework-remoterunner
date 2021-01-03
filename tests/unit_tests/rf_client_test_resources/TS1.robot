@@ -5,4 +5,6 @@ Library           ./primary_dependencies/secondary_dependencies/tertiary_depende
 
 *** Test Cases ***
 TS1.1
-    Log    1
+    Res1 Keyword1
+    Lib1 Keyword1
+    Lib3 Keyword1
