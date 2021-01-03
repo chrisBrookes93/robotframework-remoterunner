@@ -1,6 +1,7 @@
 import sys
 import os
 import logging
+
 from rfremoterunner.utils import write_file_to_disk
 from rfremoterunner.executor_argparser import ExecutorArgumentParser
 from rfremoterunner.rf_client import RemoteFrameworkClient

@@ -13,7 +13,7 @@ if six.PY3:
     unicode = str  # pylint: disable=invalid-name
 
 
-def read_file_from_disk(path, encoding='utf-8'):
+def read_file_from_disk(path, encoding='utf-8', into_lines=False):
     """
     Utility function to read and return a file from disk
 
@@ -21,12 +21,14 @@ def read_file_from_disk(path, encoding='utf-8'):
     :type path: str
     :param encoding: Encoding of the file
     :type encoding: str
+    :param into_lines: Whether or not to return a list of lines
+    :type into_lines: bool
 
     :return: Contents of the file
     :rtype: str
     """
     with open(path, 'r', encoding=encoding) as file_handle:
-        return file_handle.read()
+        return file_handle.readlines() if into_lines else file_handle.read()
 
 
 def write_file_to_disk(path, file_contents, encoding='utf-8'):
