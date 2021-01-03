@@ -85,4 +85,5 @@ def calculate_ts_parent_path(suite):
         family_tree.append(current_suite.name)
         current_suite = current_suite.parent
 
-    return os.path.join(*reversed(family_tree))
+    # Stick with unix style slashes for consistency
+    return os.path.join(*reversed(family_tree)).replace('\\', '/')

@@ -108,7 +108,7 @@ class TestUtils(unittest.TestCase):
         main_ts.parent = father_ts
 
         actual_value = calculate_ts_parent_path(main_ts)
-        self.assertEqual(os.path.join('great-grandfather', 'grandfather', 'father'), os.path.normpath(actual_value))
+        self.assertEqual(os.path.join('great-grandfather', 'grandfather', 'father').replace('\\', '/'), actual_value)
 
     def test_calculate_ts_parent_path_no_parent(self):
         """

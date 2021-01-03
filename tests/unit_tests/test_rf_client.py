@@ -51,26 +51,26 @@ class TestRemoteFrameworkClient(unittest.TestCase):
 
         expected_suites = {
             'S-TS2.robot': {
-                'path': 'Rf Client Test Resources\\Secondary Test Suites',
+                'path': 'Rf Client Test Resources/Secondary Test Suites',
                 'suite_data': '*** Settings ***\nLibrary           Lib1.py\n\n*** Test Cases ***\nS_TS2.1\n    Log  '
                               '  1\n'
             },
             'S-TS3.txt': {
-                'path': 'Rf Client Test Resources\\Secondary Test Suites',
+                'path': 'Rf Client Test Resources/Secondary Test Suites',
                 'suite_data': '*** Settings ***\nResource          Res3.robot\nLibrary           Lib2.py\n\n*** Test '
                               'Cases ***\nS_TS3.1\n    Log    1\n'
             },
             'S-TS4.robot': {
-                'path': 'Rf Client Test Resources\\Secondary Test Suites',
+                'path': 'Rf Client Test Resources/Secondary Test Suites',
                 'suite_data': '*** Settings ***\n\n*** Test Cases ***\nS_TS4.1\n    Log    1\n'
             },
             'T-TS5.robot': {
-                'path': 'Rf Client Test Resources\\Secondary Test Suites\\Tertiary Test Suites',
+                'path': 'Rf Client Test Resources/Secondary Test Suites/Tertiary Test Suites',
                 'suite_data': '*** Settings ***\nLibrary           Lib2.py\n\n*** Test Cases ***\nT_TS5.1\n    Log  '
                               '  1\n'
             },
             'T-TS6.txt': {
-                'path': 'Rf Client Test Resources\\Secondary Test Suites\\Tertiary Test Suites',
+                'path': 'Rf Client Test Resources/Secondary Test Suites/Tertiary Test Suites',
                 'suite_data': '*** Settings ***\nLibrary           Lib3.py\n\n*** Test Cases ***\nT_TS6.1\n    Log    '
                               '1\n'
             }, 'TS1.robot': {
