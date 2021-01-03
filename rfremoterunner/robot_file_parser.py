@@ -1,17 +1,18 @@
-from robot.libraries import STDLIBS
-from robot.utils.robotpath import find_file
-import re
+from io import open
 import logging
 import os
+import re
+from robot.libraries import STDLIBS
+from robot.utils.robotpath import find_file
 import six
-from io import open
+
 from rfremoterunner.utils import read_file_from_disk
 
 logger = logging.getLogger(__file__)
 IMPORT_LINE_REGEX = '(Resource|Library)([\\s]+)([^[\\n\\r]*)([\\s]+)'
 
 
-class RobotFileProcessor(object):
+class RobotFileProcessor:
 
     def __init__(self, source):
         self._modified_file_lines = []
@@ -23,8 +24,8 @@ class RobotFileProcessor(object):
             self.file_path = source.source
             self.is_test_suite = True
 
-        with open(self.file_path, 'r', encoding='utf-8') as fp:
-            self._file_lines = fp.readlines()
+        with open(self.file_path, 'r', encoding='utf-8') as file_handle:
+            self._file_lines = file_handle.readlines()
 
     def get_updated_file_data(self):
         return ''.join(self._modified_file_lines)
@@ -32,7 +33,7 @@ class RobotFileProcessor(object):
     def process_dependencies(self, dependency_cache):
         self._modified_file_lines = []
 
-        for i, line in enumerate(self._file_lines):
+        for line in self._file_lines:
             matches = re.search(IMPORT_LINE_REGEX, line)
             if matches and len(matches.groups()) == 4:
                 imp_type = matches.group(1)

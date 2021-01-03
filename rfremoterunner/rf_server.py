@@ -43,7 +43,7 @@ class RobotFrameworkServer:
         """
         Blocking call to wait for XML-RPC connections
         """
-        logger.info('Listening on {}:{}'.format(self._address, self._port))
+        logger.info('Listening on %s:%s', self._address, self._port)
         self._server.serve_forever()
 
     @staticmethod
@@ -82,7 +82,7 @@ class RobotFrameworkServer:
             # Execute the robot run
             std_out_err = StringIO()
             logger.debug('Beginning Robot Run.')
-            logger.debug('Robot Run Args: ' + str(robot_args))
+            logger.debug('Robot Run Args: %s', str(robot_args))
             ret_code = run('.',
                            stdout=std_out_err,
                            stderr=std_out_err,
@@ -99,9 +99,9 @@ class RobotFrameworkServer:
                        'log_html': xmlrpc_client.Binary(log_html.encode('utf-8')),
                        'report_html': xmlrpc_client.Binary(report_html.encode('utf-8')),
                        'ret_code': ret_code}
-        except Exception as e:
+        except Exception as err:
             # Log here because the RPC framework doesn't give the client a full stacktrace
-            logging.error(e)
+            logging.error(err)
             raise
         finally:
             if old_cwd:
@@ -132,19 +132,19 @@ class RobotFrameworkServer:
         :rtype: str
         """
         workspace_dir = tempfile.mkdtemp()
-        logger.debug('Created workspace at: {}'.format(workspace_dir))
+        logger.debug('Created workspace at: %s', workspace_dir)
 
         for suite_name, suite in test_suites.items():
             full_dir = os.path.join(workspace_dir, suite.get('path'))
             if not os.path.exists(full_dir):
                 os.makedirs(full_dir)
             full_path = os.path.join(full_dir, suite_name)
-            logger.debug('Writing suite to disk: {}'.format(full_path))
+            logger.debug('Writing suite to disk: %s', full_path)
             write_file_to_disk(full_path, suite.get('suite_data'))
 
         for dep_name, dep_data in dependencies.items():
             full_path = os.path.join(workspace_dir, dep_name)
-            logger.debug('Writing dependency to disk: {}'.format(full_path))
+            logger.debug('Writing dependency to disk: %s', full_path)
             write_file_to_disk(full_path, dep_data)
 
         return workspace_dir
@@ -163,19 +163,19 @@ class RobotFrameworkServer:
         log_html = ''
         log_html_path = os.path.join(workspace_dir, 'log.html')
         if os.path.exists(log_html_path):
-            logger.debug('Reading log.html file off disk from: {}'.format(log_html_path))
+            logger.debug('Reading log.html file off disk from: %s', log_html_path)
             log_html = read_file_from_disk(log_html_path)
 
         report_html = ''
         report_html_path = os.path.join(workspace_dir, 'report.html')
         if os.path.exists(report_html_path):
-            logger.debug('Reading report.html file off disk from: {}'.format(report_html_path))
+            logger.debug('Reading report.html file off disk from: %s', report_html_path)
             report_html = read_file_from_disk(report_html_path)
 
         output_xml = ''
         output_xml_path = os.path.join(workspace_dir, 'output.xml')
         if os.path.exists(output_xml_path):
-            logger.debug('Reading output.xml file off disk from: {}'.format(output_xml_path))
+            logger.debug('Reading output.xml file off disk from: %s', output_xml_path)
             output_xml = read_file_from_disk(output_xml_path)
 
         return output_xml, log_html, report_html

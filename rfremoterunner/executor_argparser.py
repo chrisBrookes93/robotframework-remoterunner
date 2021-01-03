@@ -1,7 +1,7 @@
 import argparse
 import os
 
-ROBOT_RUN_ARGS = ['loglevel', 'include', 'test', 'exclude', 'suite']
+ROBOT_RUN_ARGS = ['loglevel', 'include', 'test', 'exclude', 'suite', 'extension']
 
 
 class ExecutorArgumentParser:
@@ -9,7 +9,6 @@ class ExecutorArgumentParser:
     def __init__(self, args):
         """
         Constructor for ExecutorArgumentParser
-        
         :param args: Arguments to process (probably stdin)
         :type args: list
         """
@@ -70,6 +69,10 @@ class ExecutorArgumentParser:
                             help='Where to save the HTML Report file on this machine once its been retrieved. Default: '
                                  'remote_report.html',
                             default='remote_report.html')
+        parser.add_argument('-F', '--extension',
+                            help='Parse only files with this extension when executing a directory. Has no effect when '
+                                 'running individual files or when using resource files. If more than one extension is '
+                                 'needed, separate them with a colon.\r Examples: `--extension robot`, `-F robot:txt`')
         parser.add_argument('-s', '--suite',
                             help='Select test suites to run by name. When this option is used with --test, --include or'
                                  ' --exclude, only test cases in matching suites and also matching other filtering '

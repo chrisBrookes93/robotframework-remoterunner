@@ -1,7 +1,7 @@
 from io import open
+import os
 import re
 import six
-import os
 
 
 PORT_INC_REGEX = '.*:[0-9]{1,5}$'
@@ -10,7 +10,7 @@ PORT_INC_REGEX = '.*:[0-9]{1,5}$'
 # We're using UTF-8 file encodings as standard so need to make sure that we're using unicode strings (only an issue in
 # Python 2)
 if six.PY3:
-    unicode = str
+    unicode = str  # pylint: disable=invalid-name
 
 
 def read_file_from_disk(path, encoding='utf-8'):
@@ -25,8 +25,8 @@ def read_file_from_disk(path, encoding='utf-8'):
     :return: Contents of the file
     :rtype: str
     """
-    with open(path, 'r', encoding=encoding) as fp:
-        return fp.read()
+    with open(path, 'r', encoding=encoding) as file_handle:
+        return file_handle.read()
 
 
 def write_file_to_disk(path, file_contents, encoding='utf-8'):
@@ -40,8 +40,8 @@ def write_file_to_disk(path, file_contents, encoding='utf-8'):
     :param encoding: Encoding of the file
     :type encoding: str
     """
-    with open(path, 'w', encoding=encoding) as fp:
-        fp.write(unicode(file_contents))
+    with open(path, 'w', encoding=encoding) as file_handle:
+        file_handle.write(unicode(file_contents))
 
 
 def normalize_xmlrpc_address(address, default_port):
