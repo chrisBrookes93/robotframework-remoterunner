@@ -2,5 +2,5 @@
 Library    Lib3.py
 
 *** Keywords ***
-K1
+Res3 Keyword1
     Log    K1

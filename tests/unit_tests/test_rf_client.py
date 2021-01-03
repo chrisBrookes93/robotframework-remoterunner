@@ -39,26 +39,26 @@ class TestRemoteFrameworkClient(unittest.TestCase):
         Test that execute_run() correctly collects the test suites and resources when given a single directory
         """
         expected_deps = {
-            'Lib1.py': "\n\ndef Keyword_43543543():\n    print('Keyword 1')",
-            'Lib3.py': "\n\ndef Keyword_343534():\n    print('Keyword 1')",
-            'Res3.robot': '*** Settings ***\nLibrary    Lib3.py\n\n*** Keywords ***\nK1\n    Log    K1\n',
-            'Lib2.py': "\n\ndef Keyword_34543534():\n    print('Keyword 1')",
-            'Res2.robot': '*** Settings ***\nResource    Res3.robot\nLibrary     Lib3.py\n\n*** Keywords ***\nK1\n '
-                          '   Log    K1\n',
-            'Res1.robot': '*** Settings ***\nResource    Res2.robot\nLibrary    Lib3.py\n\n*** Keywords ***\nK1\n  '
-                          '  Log    K1\n'
+            'Lib1.py': "\n\ndef Lib1_Keyword1():\n    print('Keyword 1')",
+            'Lib3.py': "\n\ndef Lib3_Keyword1():\n    print('Keyword 1')",
+            'Res3.resource': '*** Settings ***\nLibrary    Lib3.py\n\n*** Keywords ***\nRes3 Keyword1\n    Log    K1\n',
+            'Lib2.py': "\n\ndef Lib2_Keyword1():\n    print('Keyword 1')",
+            'Res2.robot': '*** Settings ***\nResource    Res3.resource\nLibrary     Lib3.py\n\n*** Keywords ***\nRes2 '
+                          'Keyword1\n    Log    K1\n',
+            'Res1.robot': '*** Settings ***\nResource    Res2.robot\nLibrary    Lib3.py\n\n*** Keywords ***\nRes1 '
+                          'Keyword1\n    Log    K1\n'
         }
 
         expected_suites = {
             'S-TS2.robot': {
                 'path': 'Rf Client Test Resources/Secondary Test Suites',
-                'suite_data': '*** Settings ***\nLibrary           Lib1.py\n\n*** Test Cases ***\nS_TS2.1\n    Log  '
-                              '  1\n'
+                'suite_data': '*** Settings ***\nLibrary           Lib1.py\n\n*** Test Cases ***\nS_TS2.1\n    Lib1_'
+                              'Keyword1\n'
             },
             'S-TS3.txt': {
                 'path': 'Rf Client Test Resources/Secondary Test Suites',
-                'suite_data': '*** Settings ***\nResource          Res3.robot\nLibrary           Lib2.py\n\n*** Test '
-                              'Cases ***\nS_TS3.1\n    Log    1\n'
+                'suite_data': '*** Settings ***\nResource          Res3.resource\nLibrary           Lib2.py\n\n*** Test'
+                              ' Cases ***\nS_TS3.1\n    Lib2 Keyword1\n    Res3 Keyword1\n'
             },
             'S-TS4.robot': {
                 'path': 'Rf Client Test Resources/Secondary Test Suites',
@@ -66,17 +66,18 @@ class TestRemoteFrameworkClient(unittest.TestCase):
             },
             'T-TS5.robot': {
                 'path': 'Rf Client Test Resources/Secondary Test Suites/Tertiary Test Suites',
-                'suite_data': '*** Settings ***\nLibrary           Lib2.py\n\n*** Test Cases ***\nT_TS5.1\n    Log  '
-                              '  1\n'
+                'suite_data': '*** Settings ***\nLibrary           Lib2.py\n\n*** Test Cases ***\nT_TS5.1\n    Lib2 '
+                              'Keyword1\n'
             },
             'T-TS6.txt': {
                 'path': 'Rf Client Test Resources/Secondary Test Suites/Tertiary Test Suites',
-                'suite_data': '*** Settings ***\nLibrary           Lib3.py\n\n*** Test Cases ***\nT_TS6.1\n    Log    '
-                              '1\n'
+                'suite_data': '*** Settings ***\nLibrary           Lib3.py\n\n*** Test Cases ***\nT_TS6.1\n    Lib3 '
+                              'Keyword1\n'
             }, 'TS1.robot': {
                 'path': 'Rf Client Test Resources',
                 'suite_data': '*** Settings ***\nResource          Res1.robot\nLibrary           Lib1.py\nLibrary     '
-                              '      Lib3.py\n\n*** Test Cases ***\nTS1.1\n    Log    1\n'
+                              '      Lib3.py\n\n*** Test Cases ***\nTS1.1\n    Res1 Keyword1\n    Lib1 Keyword1\n    '
+                              'Lib3 Keyword1\n'
             }
         }
         expected_args = {'include': 'Tag1'}
