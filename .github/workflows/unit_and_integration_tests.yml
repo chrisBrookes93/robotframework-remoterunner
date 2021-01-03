@@ -24,7 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Run Tox
-      run: tox -e py-robotframework{311}
+      run: tox
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
