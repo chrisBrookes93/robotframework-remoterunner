@@ -81,13 +81,8 @@ class TestRemoteFrameworkClient(unittest.TestCase):
         }
         expected_args = {'include': 'Tag1'}
 
-        def mock_execute_robot_run(suites, deps, robot_args, debug):
-            assert expected_deps == deps
-            assert expected_suites == suites
-            assert expected_args == robot_args
-
         mock_server_proxy = MagicMock(spec=xmlrpc_client.ServerProxy)
-        mock_server_proxy.execute_robot_run = mock_execute_robot_run
+        mock_server_proxy.execute_robot_run = MagicMock()
 
         with patch('rfremoterunner.rf_client.xmlrpc_client.ServerProxy', return_value=mock_server_proxy):
             # In order to mock the server we need to initialize this here, so the one created in the setup cannot be
@@ -95,6 +90,10 @@ class TestRemoteFrameworkClient(unittest.TestCase):
             test_obj = RemoteFrameworkClient('127.0.0.1')
             suite_list = [self.resource_dir]
             test_obj.execute_run(suite_list, 'txt:robot', None, expected_args)
+            mock_server_proxy.execute_robot_run.assert_called_once_with(expected_suites,
+                                                                        expected_deps,
+                                                                        expected_args,
+                                                                        False)
 
     def test_execute_run_correct_suite_filtering(self):
         """
