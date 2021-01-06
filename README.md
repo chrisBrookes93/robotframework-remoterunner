@@ -1,6 +1,6 @@
 # Robot Framework Remote Runner
 
-[![Build Status](https://github.com/chrisBrookes93/robotframework-remoterunner/workflows/CI/badge.svg?branch=master)](https://github.com/chrisBrookes93/robotframework-remoterunner/actions)
+[![Build Status](https://github.com/chrisBrookes93/robotframework-remoterunner/workflows/CI/badge.svg?branch=main)](https://github.com/chrisBrookes93/robotframework-remoterunner/actions)
 [![PyPI version](https://badge.fury.io/py/robotframework-remoterunner.svg)](https://badge.fury.io/py/robotframework-remoterunner)
 
 This library provides a robotframework agent,
