@@ -5,8 +5,8 @@ name: Daily Run
 
 on:
   schedule:
-    # Runs once each day at 11pm
-    - cron:  '0 0 23 1/1 * ? *'
+    # Runs once each day
+    - cron: '0 0 0 * * ?'
 
 jobs:
 
