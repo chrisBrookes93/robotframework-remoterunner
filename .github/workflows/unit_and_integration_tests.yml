@@ -19,6 +19,8 @@ jobs:
           - 1471:1471
 
     steps:
+      - name: Print github ref
+        run: echo ${GITHUB_REF}
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
