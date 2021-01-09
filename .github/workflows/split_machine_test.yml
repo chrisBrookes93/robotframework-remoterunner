@@ -5,8 +5,6 @@ on:
   push:
     branches:
       - main
-      # Below line will be removed once confirmed everything is working.
-      - feature/ci_improvements
 
 jobs:
   split-box-test:
