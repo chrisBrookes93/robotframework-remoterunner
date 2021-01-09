@@ -4,61 +4,32 @@ on: [push, pull_request]
 
 jobs:
 
-  test:
-
-    runs-on: ${{ matrix.os }}
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-    timeout-minutes: 5
-    strategy:
-      matrix:
-        include:
-          - {name: Linux,   python-version: 3.9, os: ubuntu-latest}
-          - {name: Windows, python-version: 3.9, os: windows-latest}
-          - {name: Mac,     python-version: 3.9, os: macos-latest}
-          - {name: Py2.7,   python-version: 2.7, os: ubuntu-latest}
-          - {name: Py3.6,   python-version: 3.6, os: ubuntu-latest}
-          - {name: Py3.7,   python-version: 3.7, os: ubuntu-latest}
-          - {name: Py3.8,   python-version: 3.8, os: ubuntu-latest}
-          - {name: Py3.9,   python-version: 3.9, os: ubuntu-latest}
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox
-    - name: Run Tox
-      run: tox
-    - uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: ${{ matrix.os }}_py${{ matrix.python-version }}_log.html
-        path: .tox/py_log.html
-        retention-days: 7
-
-  code_cov:
+  split-box-test:
 
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-    timeout-minutes: 5
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install .[dev,codecov]
 
-    - name: Run Pylint
-      run: pylint rfremoterunner tests --fail-under 8.5
-    - name: Run Code Coverage
-      run: |
-        coverage run --source rfremoterunner -m unittest2 discover .
-        coverage report --fail-under 75
+    services:
+      rfagent:
+        image: chrisbrookes93/appservicecontainer:3.8-slim-buster-v0.0.1
+        env:
+          GIT_URL: git://github.com/chrisBrookes93/robotframework-remoterunner.git
+          GIT_COMMIT_HASH: $GITHUB_SHA
+          APP_LAUNCH_CMDLINE: rfagent -p 1471
+        # Set health checks to wait until the rfagent is running
+        options: >-
+          --health-cmd curl http://0.0.0.0:1471
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1471:1471
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Execute a remote run
+        run: |
+          rfremoterun 127.0.0.1 /tests/unit_tests/rf_client_test_resources
