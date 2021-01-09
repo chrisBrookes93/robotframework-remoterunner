@@ -17,7 +17,7 @@ jobs:
           APP_LAUNCH_CMDLINE: rfagent -p 1471
         # Set health checks to wait until the rfagent is running
         options: >-
-          --health-cmd curl http://0.0.0.0:1471
+          --health-cmd "curl http://0.0.0.0:1471"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
