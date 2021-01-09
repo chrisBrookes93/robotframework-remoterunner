@@ -3,7 +3,10 @@
 # software/platforms that are out of our control, as well as any intermittent failures.
 name: Daily Run
 
-on: [push] # TODO - change to schedule once its working
+on:
+  schedule:
+    # Runs once each day at 11pm
+    - cron:  '0 0 23 1/1 * ? *'
 
 jobs:
 
@@ -25,7 +28,7 @@ jobs:
         pip install .[dev] --pre
     - name: Run Unit Tests
       run: |
-        python -m unittest2 discover
+        pytest
     - name: Run Automated Tests
       run: |
         robot tests/integration_tests/test_suites/
