@@ -29,4 +29,4 @@ jobs:
           pip install .
       - name: Execute a remote run
         run: |
-          rfremoterun 127.0.0.1 /tests/unit_tests/rf_client_test_resources
+          rfremoterun 127.0.0.1 tests/unit_tests/rf_client_test_resources
