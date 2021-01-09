@@ -34,6 +34,7 @@ jobs:
         uses: nick-invision/retry@v2
         with:
           max_attempts: 5
+          timeout_seconds: 15
           command: curl http://0.0.0.0:1471
       - name: Execute a remote run
         run: |
