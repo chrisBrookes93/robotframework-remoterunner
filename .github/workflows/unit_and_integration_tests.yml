@@ -27,12 +27,15 @@ jobs:
       - name: Install the package
         run: |
           pip install .
-      - name: Check the deployed service URL
-        uses: jtalk/url-health-check-action@v1.2
+      - name: Wait for rfagent service to start
+        uses: nick-invision/retry@v2
         with:
-          url: http://0.0.0.0:1471
-          max-attempts: 15
-          retry-delay: 5s
+          timeout_seconds: 15
+          max_attempts: 5
+          command: curl http://0.0.0.0:1471
       - name: Execute a remote run
         run: |
           rfremoterun 127.0.0.1 tests/unit_tests/rf_client_test_resources
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
