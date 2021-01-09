@@ -247,7 +247,8 @@ Create Executor Command Line
     [Arguments]    ${ip}    ${suite_list}    ${arg_dict}    ${debug}=${False}
     [Documentation]    Creates a command line string for the executor
     ${cmd_line}=    Create List    rfremoterun    ${ip}
-    FOR    ${key}    ${val}    IN    &{arg_dict}
+    FOR    ${key}    IN    @{arg_dict.keys()}
+        ${val}=    Get From Dictionary    ${arg_dict}    ${key}
         Append To List    ${cmd_line}    ${key}
         Append To List    ${cmd_line}    ${val}
     END
