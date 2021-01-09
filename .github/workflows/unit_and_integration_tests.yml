@@ -27,6 +27,12 @@ jobs:
       - name: Install the package
         run: |
           pip install .
+      - name: Check the deployed service URL
+        uses: jtalk/url-health-check-action@v1.2
+        with:
+          url: http://0.0.0.0:1471
+          max-attempts: 15
+          retry-delay: 5s
       - name: Execute a remote run
         run: |
           rfremoterun 127.0.0.1 tests/unit_tests/rf_client_test_resources
