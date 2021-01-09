@@ -13,7 +13,6 @@ jobs:
         image: chrisbrookes93/appservicecontainer:3.8-slim-buster-v0.0.1
         env:
           GIT_URL: git://github.com/chrisBrookes93/robotframework-remoterunner.git
-          GIT_COMMIT_HASH: $GITHUB_SHA
           APP_LAUNCH_CMDLINE: rfagent -p 1471
         ports:
           - 1471:1471
