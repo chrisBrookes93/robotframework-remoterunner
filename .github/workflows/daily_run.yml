@@ -1,0 +1,39 @@
+# Run the tests against the latest stable versions of Python3, Ubuntu, Windows and MacOS. Also install using
+# pre-release versions of Python dependencies. This workflow runs daily and is designed to highlight issues with
+# software/platforms that are out of our control, as well as any intermittent failures.
+name: Daily Run
+
+on:
+  schedule:
+      - cron: '0 0 * * *' # Once per day at midnight
+
+jobs:
+
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.*
+    - name: Install the package
+      run: |
+        python -m pip install --upgrade pip
+        pip install .[dev] --pre
+    - name: Run Unit Tests
+      run: |
+        pytest
+    - name: Run Automated Tests
+      run: |
+        robot tests/integration_tests/test_suites/
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: ${{ matrix.os }}_log.html
+        path: log.html
+        retention-days: 7

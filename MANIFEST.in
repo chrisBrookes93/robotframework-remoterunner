@@ -1,4 +1,5 @@
 include CONTRIBUTING.md
 include tox.ini
+include .pylintrc
 graft tests
 global-exclude *.pyc

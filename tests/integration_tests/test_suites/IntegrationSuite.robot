@@ -248,9 +248,10 @@ Create Executor Command Line
     [Documentation]    Creates a command line string for the executor
     ${cmd_line}=    Create List    rfremoterun    ${ip}
     FOR    ${key}    IN    @{arg_dict.keys()}
-    \    ${val}=    Get From Dictionary    ${arg_dict}    ${key}
-    \    Append To List    ${cmd_line}    ${key}
-    \    Append To List    ${cmd_line}    ${val}
+        ${val}=    Get From Dictionary    ${arg_dict}    ${key}
+        Append To List    ${cmd_line}    ${key}
+        Append To List    ${cmd_line}    ${val}
+    END
     ${cmd_line}=    Combine Lists    ${cmd_line}    ${suite_list}
     Run Keyword If    ${debug}    Append To List    ${cmd_line}    --debug
     [Return]    ${cmd_line}
