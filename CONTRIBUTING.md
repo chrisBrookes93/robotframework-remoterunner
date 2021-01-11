@@ -16,5 +16,5 @@ pip install -e .[dev]
 To run the full test suite based on your current Python version use:
 
 ```text
-tox -e py
+tox -e tests
 ```
