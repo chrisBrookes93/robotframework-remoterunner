@@ -12,15 +12,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - {name: Linux,   python-version: 3.9, os: ubuntu-latest}
-          - {name: Windows, python-version: 3.9, os: windows-latest}
-          - {name: Mac,     python-version: 3.9, os: macos-latest}
-          - {name: Py2.7,   python-version: 2.7, os: ubuntu-latest}
-          - {name: Py3.6,   python-version: 3.6, os: ubuntu-latest}
-          - {name: Py3.7,   python-version: 3.7, os: ubuntu-latest}
-          - {name: Py3.8,   python-version: 3.8, os: ubuntu-latest}
-          - {name: Py3.9,   python-version: 3.9, os: ubuntu-latest}
-
+          - {name: Linux,   python-version: 3.9, os: ubuntu-latest,  tox: py}
+          - {name: Windows, python-version: 3.9, os: windows-latest, tox: py}
+          - {name: Mac,     python-version: 3.9, os: macos-latest, tox: py}
+          - {name: Py2.7,   python-version: 2.7, os: ubuntu-latest, tox: py}
+          - {name: Py3.6,   python-version: 3.6, os: ubuntu-latest, tox: py}
+          - {name: Py3.7,   python-version: 3.7, os: ubuntu-latest, tox: py}
+          - {name: Py3.8,   python-version: 3.8, os: ubuntu-latest, tox: py}
+          - {name: Py3.9,   python-version: 3.9, os: ubuntu-latest, tox: py}
+          - {name: robotframework3.1.1,   python-version: 3.9, os: ubuntu-latest, tox: "py-robotframework{311}"}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -32,7 +32,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Run Tox
-      run: tox
+      run: tox -e ${{ matrix.tox }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
