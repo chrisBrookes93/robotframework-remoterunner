@@ -9,14 +9,13 @@ jobs:
       rfagent:
         image: chrisbrookes93/appservicecontainer:3.8-slim-buster-v0.0.1
         env:
-          GIT_URL: git://github.com/chrisBrookes93/robotframework-remoterunner.git
+          GIT_URL: git://github.com/${{ github.repository }}.git
           GIT_COMMIT_HASH: ${{ github.sha }}
           APP_LAUNCH_CMDLINE: rfagent -p 1471
         ports:
           - 1471:1471
 
     steps:
-      - run: echo ${{ github.repository }}
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
