@@ -26,4 +26,7 @@ jobs:
       - name: Launch rfagent container
         run: docker run -d -p 1471:1471 -v $(pwd)/dist:/package python:3.8-slim-buster /bin/bash -c "pip install /package/* && rfagent"
       - name: Run rf-remoterun
-        run: rfremoterun 0.0.0.0:1471 tests/unit_tests/rf_client_test_resources/TS1.robot
+        run: rfremoterun 127.0.0.1:1471 tests/unit_tests/rf_client_test_resources/TS1.robot
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
