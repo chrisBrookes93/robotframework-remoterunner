@@ -21,6 +21,8 @@ jobs:
         run: |
           pip install build
           python -m build . -w
+      - name: Install locally from whl
+        run: pip install ./dist/*
       - name: Launch rfagent container
         run: docker run -d -p 1471:1471 -v $(pwd)/dist:/package python:3.8-slim-buster /bin/bash -c "pip install /package/* && rfagent"
       - name: Run rf-remoterun
