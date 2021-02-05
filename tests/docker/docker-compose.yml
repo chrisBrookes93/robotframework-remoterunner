@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  rfagent:
+    image: python:3.8-slim-buster
+    command: /bin/bash -c "pip install /package/* && rfagent"
+    volumes:
+      - ../../dist:/package
+
+  rf-remoterunner:
+    image: python:3.8-slim-buster
+    command: /bin/bash -c "pip install /package/* && rfremoterun rfagent /test_suites"
+    volumes:
+      - ../../dist:/package
+      - ../../tests/unit_tests/rf_client_test_resources:/test_suites
+    depends_on: 
+      - rfagent
