@@ -188,7 +188,8 @@ class RemoteFrameworkClient:
 
                     if imp_type == 'Library':
                         # If its a Library (python file) then read the data and add to the dependencies
-                        self._dependencies[filename] = read_file_from_disk(full_path)
+                        if os.path.isfile(full_path):
+                            self._dependencies[filename] = read_file_from_disk(full_path)
                     else:
                         # If its a Resource, recurse down and parse it
                         self._process_robot_file(full_path)
