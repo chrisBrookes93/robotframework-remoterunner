@@ -163,6 +163,10 @@ class RemoteFrameworkClient:
         file_lines = read_file_from_disk(file_path, into_lines=True)
 
         for line in file_lines:
+            if not (line.strip().endswith('.py') or line.strip().endswith('.resource')):
+                modified_file_lines.append(line)
+                continue
+
             # Check if the current line is a Library or Resource import
             matches = IMPORT_LINE_REGEX.search(line)
             if matches and len(matches.groups()) == 4:
@@ -177,10 +181,8 @@ class RemoteFrameworkClient:
                 # Rebuild the updated line and append
                 modified_file_lines.append(imp_type + whitespace_sep + filename + line_ending)
 
-                # If this not a dependency we've already dealt with and not a built-in robot library
-                # (e.g. robot.libraries.Process)
-                basename, extension = os.path.splitext(filename)
-                if extension in [".resource", ".py"] and filename not in self._dependencies:
+                # If this is not a dependency we've already dealt with
+                if filename not in self._dependencies:
                     # Find the actual file path
                     full_path = find_file(res_path, os.path.dirname(file_path), imp_type)
 
