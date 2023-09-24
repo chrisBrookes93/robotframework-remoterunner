@@ -18,6 +18,11 @@ class TestRemoteFrameworkClient(unittest.TestCase):
         self.ts1 = parent_suite.suites[1]
         self.test_obj = RemoteFrameworkClient('127.0.0.1')
 
+
+    def test_process_robot_file_test1(self):
+        self.test_obj._process_robot_file('C:\\DEV\\robotframework-remoterunner\\tests\\unit_tests\\rf_client_test_resources\\NEW.robot')
+
+
     def assert_file_contents_is_equal(self, file_path, expected_file_data):
         """
         Helper function to verify the contents of a file

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 5.0.1 (Python 3.7.7 on win32)" generated="20220703 22:05:29.046" rpa="false" schemaversion="3">
+<suite id="s1" name="NEW" source="C:\DEV\robotframework-remoterunner\tests\unit_tests\rf_client_test_resources\NEW.robot">
+<test id="s1-t1" name="Grab Files From My Server" line="5">
+<kw name="Open Connection" library="SCPLibrary">
+<arg>192.168.1.42</arg>
+<arg>username=tyler</arg>
+<arg>password=teapot</arg>
+<doc>Opens a new SCP connection to the given host.</doc>
+<status status="FAIL" starttime="20220703 22:05:29.240" endtime="20220703 22:05:50.288"/>
+</kw>
+<kw name="Get File" library="SCPLibrary">
+<arg>remotefile.txt</arg>
+<arg>localfile.txt</arg>
+<doc>Downloads a file from the remote machine to the local machine.</doc>
+<status status="NOT RUN" starttime="20220703 22:05:50.289" endtime="20220703 22:05:50.289"/>
+</kw>
+<kw name="Get File" library="SCPLibrary">
+<arg>/home/tyler/</arg>
+<arg>mytylerdir/</arg>
+<arg>recursive=True</arg>
+<doc>Downloads a file from the remote machine to the local machine.</doc>
+<status status="NOT RUN" starttime="20220703 22:05:50.290" endtime="20220703 22:05:50.290"/>
+</kw>
+<kw name="Close Connection" library="SCPLibrary">
+<doc>Closes the SCP connection.</doc>
+<status status="NOT RUN" starttime="20220703 22:05:50.290" endtime="20220703 22:05:50.290"/>
+</kw>
+<status status="FAIL" starttime="20220703 22:05:29.239" endtime="20220703 22:05:50.291">Execution terminated by signal</status>
+</test>
+<test id="s1-t2" name="Put File On My Server" line="11">
+<tag>robot:exit</tag>
+<status status="FAIL" starttime="20220703 22:05:50.293" endtime="20220703 22:05:50.293">Test execution stopped due to a fatal error.</status>
+</test>
+<status status="FAIL" starttime="20220703 22:05:29.049" endtime="20220703 22:05:50.295"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="2" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="0" fail="1" skip="0" info="combined" combined="NOT robot:exit">NOT robot:exit</stat>
+</tag>
+<suite>
+<stat pass="0" fail="2" skip="0" id="s1" name="NEW">NEW</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

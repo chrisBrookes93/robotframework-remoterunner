@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 4.0b2.dev1 (Python 3.7.7 on win32)" generated="20230924 08:24:07.631" rpa="false">
+<suite id="s1" name="Root" source="C:\Users\chris\AppData\Local\Temp\tmpfazsoswq">
+<suite id="s1-s1" name="NEW" source="C:\Users\chris\AppData\Local\Temp\tmpfazsoswq\NEW.robot">
+<test id="s1-s1-t1" name="Check Correct Passing Of Arguments Into Library">
+<kw name="Get Pos Arg" library="ConstructorTestLibrary">
+<assign>
+<var>${pos_arg}</var>
+</assign>
+<msg timestamp="20230924 08:24:07.659" level="INFO">${pos_arg} = 1</msg>
+<status status="PASS" starttime="20230924 08:24:07.659" endtime="20230924 08:24:07.659"></status>
+</kw>
+<kw name="Get Keyword Arg" library="ConstructorTestLibrary">
+<assign>
+<var>${keyword_arg}</var>
+</assign>
+<msg timestamp="20230924 08:24:07.660" level="INFO">${keyword_arg} = 2</msg>
+<status status="PASS" starttime="20230924 08:24:07.659" endtime="20230924 08:24:07.660"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>1</arg>
+<arg>${pos_arg}</arg>
+</arguments>
+<status status="PASS" starttime="20230924 08:24:07.660" endtime="20230924 08:24:07.660"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>2</arg>
+<arg>${keyword_arg}</arg>
+</arguments>
+<status status="PASS" starttime="20230924 08:24:07.660" endtime="20230924 08:24:07.660"></status>
+</kw>
+<status status="PASS" starttime="20230924 08:24:07.659" endtime="20230924 08:24:07.660"></status>
+</test>
+<status status="PASS" starttime="20230924 08:24:07.651" endtime="20230924 08:24:07.661"></status>
+</suite>
+<status status="PASS" starttime="20230924 08:24:07.632" endtime="20230924 08:24:07.661"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Root">Root</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s1" name="NEW">Root.NEW</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
