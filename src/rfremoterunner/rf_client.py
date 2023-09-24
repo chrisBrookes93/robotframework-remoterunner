@@ -1,17 +1,23 @@
+import importlib
 import os
 import logging
 import re
+
 import six.moves.xmlrpc_client as xmlrpc_client
 import six
 from robot.api import TestSuiteBuilder
 from robot.libraries import STDLIBS
 from robot.utils.robotpath import find_file
+from robot.errors import DataError
 
 from rfremoterunner.utils import normalize_xmlrpc_address, calculate_ts_parent_path, read_file_from_disk
 
 logger = logging.getLogger(__file__)
 DEFAULT_PORT = 1471
-IMPORT_LINE_REGEX = re.compile('(Resource|Library)([\\s]+)([^[\\n\\r]*)([\\s]+)')
+IMPORT_LINE_REGEX = re.compile('(Resource|Library)[ ]{4}([^[\\n\\r]*)[ ]*(.*)')
+WHITESPACE_SEP = "    "
+LINE_ENDING = '\r\n'
+SPACE_SPLITTER_REGEX = re.compile(r'(\s{2,}|\t)', re.UNICODE)
 
 
 class RemoteFrameworkClient:
@@ -138,6 +144,33 @@ class RemoteFrameworkClient:
             'suite_data': updated_file
         }
 
+    def resolve_resource(self, res_path, suite_file_path, imp_type):
+        # Skip if we've already processed this file
+        filename = os.path.basename(res_path)
+        if filename in self._dependencies:
+            return None
+
+        # Skip robot stdlibs, they should be installed on the remote machine
+        if res_path.strip() in STDLIBS:
+            return None
+
+        try:
+            full_path = find_file(res_path, os.path.dirname(suite_file_path), imp_type)
+            # TODO: find a more robust way of detecting if this is an installed package, or simply a file in the
+            #  pythonpath
+            if 'site-packages' in full_path.lower():
+                return None
+
+            if os.path.isdir(full_path):
+                logger.warning('This library currently only supports pointing to explicit python files, skipping %s',
+                               res_path)
+                return None
+
+            return full_path
+        except DataError:
+            logger.warning("Failed to resolve resource, ignoring %s", res_path)
+            return None
+
     def _process_robot_file(self, source):
         """
         Processes a robot file (could be a Test Suite or a Resource) and performs the following:
@@ -165,26 +198,28 @@ class RemoteFrameworkClient:
 
         for line in file_lines:
             # Check if the current line is a Library or Resource import
-            matches = IMPORT_LINE_REGEX.search(line)
-            if matches and len(matches.groups()) == 4:
-                imp_type = matches.group(1)
-                whitespace_sep = matches.group(2)
-                res_path = matches.group(3)
-                # Replace the path with just the filename. They will be in the PYTHONPATH on the remote side so only
-                # the filename is required.
-                filename = os.path.basename(res_path)
-                line_ending = matches.group(4)
+            if line.lower().startswith("library") or line.lower().startswith("resource"):
+                split_line = [x for x in SPACE_SPLITTER_REGEX.split(line, 2) if x.strip()]
+                # Strip off newline chars
+                split_line[-1] = split_line[-1].strip()
 
-                # Rebuild the updated line and append
-                modified_file_lines.append(imp_type + whitespace_sep + filename + line_ending)
+                imp_type = split_line[0]
+                res_path = split_line[1]
+                # Capture any extra stuff on the line (e.g. args being passed into the library)
+                extra_args = WHITESPACE_SEP.join(split_line[2:])
 
-                # If this not a dependency we've already dealt with and not a built-in robot library
-                # (e.g. robot.libraries.Process)
-                if filename not in self._dependencies and \
-                        not res_path.strip().startswith('robot.libraries') \
-                        and res_path.strip() not in STDLIBS:
-                    # Find the actual file path
-                    full_path = find_file(res_path, os.path.dirname(file_path), imp_type)
+                full_path = self.resolve_resource(res_path, file_path, imp_type)
+                if full_path:
+                    # Replace the path with just the filename. They will be in the PYTHONPATH on the remote side so only
+                    # the filename is required.
+                    filename = os.path.basename(res_path)
+
+                    # Rebuild the updated line and append
+                    newline = WHITESPACE_SEP.join([imp_type, filename])
+                    if extra_args:
+                        newline += WHITESPACE_SEP + extra_args
+                    newline += LINE_ENDING
+                    modified_file_lines.append(newline)
 
                     if imp_type == 'Library':
                         # If its a Library (python file) then read the data and add to the dependencies

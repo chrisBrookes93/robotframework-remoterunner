@@ -7,3 +7,5 @@ htmlcov/
 .coverage
 /build/
 dist/
+.env/
+.env2/
