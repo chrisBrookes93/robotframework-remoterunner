@@ -38,7 +38,12 @@ class RobotFrameworkServer:
         self._port = port
         self._server = xmlrpc_server.SimpleXMLRPCServer((address, int(port)), encoding='utf-8')
         self._server.register_function(RobotFrameworkServer.execute_robot_run, self.EXECUTE_FUNC)
+        self._server.register_function(self.shutdown)
         logger.setLevel(logging.DEBUG if debug else logging.INFO)
+
+    def shutdown(self):
+        self._server._BaseServer__shutdown_request = True
+        return 0
 
     def serve(self):
         """
